@@ -16,8 +16,6 @@ const createUser = async (req, res) => {
   try {
     const { username, email, password, role } = req.body;
 
-    let userRole = req.user && req.user.role === "admin" ? "admin" : "user";
-
     if (role === "admin") {
       const adminUser = await User.findOne({ role: "admin", email });
       if (adminUser) {
@@ -39,7 +37,6 @@ const createUser = async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      role: userRole,
     });
     await newUser.save();
 
