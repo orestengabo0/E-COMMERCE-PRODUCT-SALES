@@ -5,7 +5,7 @@ const { hashPassword } = require("../Security/hashPasswords");
 const {
   validateLogin,
   validateRegistration,
-} = require("../Validation/validation");
+} = require("../Validation/validationUser");
 
 const createUser = async (req, res) => {
   const { error } = validateRegistration(req.body);
