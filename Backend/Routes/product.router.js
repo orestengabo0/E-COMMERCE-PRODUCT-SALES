@@ -4,6 +4,7 @@ const {
   createNewProduct,
   getAllProducts,
   getProduct,
+  deleteProduct,
 } = require("../Controllers/Product.controller");
 const { Product } = require("../Models/product.model");
 const productRoute = express.Router();
@@ -16,6 +17,6 @@ productRoute.post(
   authorize(["admin"]),
   createNewProduct
 );
-productRoute.delete("/delete/:id", );
+productRoute.delete("/delete/:id", deleteProduct);
 
 module.exports = productRoute;
