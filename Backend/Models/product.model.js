@@ -1,4 +1,3 @@
-const { required, string, ref } = require('joi')
 const mongoose = require('mongoose')
 const productSchema = new mongoose.Schema({
     name: {
@@ -25,6 +24,10 @@ const productSchema = new mongoose.Schema({
         required: true,
         min: 0
     },
+    brand: {
+        type: String,
+        trim: true
+    },
     images: [
         {
             url: {
@@ -37,11 +40,7 @@ const productSchema = new mongoose.Schema({
             }
         }
     ],
-    brand: {
-        type: String,
-        trim: true
-    },
-    rating: [
+    ratings: [
         {
             user: {
                 type: mongoose.Schema.Types.ObjectId,
@@ -66,4 +65,4 @@ const productSchema = new mongoose.Schema({
 
 const Product = mongoose.model('Product', productSchema)
 
-module.exports = Product
+module.exports.Product = Product

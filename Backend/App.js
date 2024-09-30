@@ -3,6 +3,7 @@ const express = require("express");
 const connectDB = require("./Config/db.js");
 const path = require("path");
 const userRoute = require("./Routes/user.router.js");
+const productRoute = require("./Routes/product.router.js");
 
 dotenv.config({ path: path.join(__dirname, "../.env") });
 
@@ -13,6 +14,7 @@ app.use(express.json());
 app.use("/api/auth", userRoute);
 app.use("/api/auth", userRoute);
 app.use("/api/auth/permissions", userRoute);
+app.use('/api/products', productRoute)
 
 connectDB().then(() => {
   app.listen(PORT, () => {
