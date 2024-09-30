@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { User } = require("../Models/user.model");
+const { hashPassword } = require('../Security/hashPasswords')
 const {
   validateLogin,
   validateRegistration,
@@ -27,8 +28,7 @@ const createUser = async (req, res) => {
       }
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await hashPassword(password)
 
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
     if (existingUser)
