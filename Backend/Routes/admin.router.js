@@ -4,7 +4,7 @@ const { createUser, updatePermission, revokeAdminPermission  } = require('../Con
 const adminRouter = express.Router()
 
 adminRouter.post('/register', authenticate, authorize(['admin']), createUser)
-adminRouter.put('/:email', authenticate, authorize(['admin']), updatePermission)
-adminRouter.put('/:email', authenticate, authorize(['admin']), revokeAdminPermission)
+adminRouter.put('/grant/:email', authenticate, authorize(['admin']), updatePermission)
+adminRouter.put('/revoke/:email', authenticate, authorize(['admin']), revokeAdminPermission)
 
 module.exports = adminRouter

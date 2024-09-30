@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { User } = require("../Models/user.model");
-const { hashPassword } = require('../Security/hashPasswords')
+const { hashPassword } = require("../Security/hashPasswords");
 const {
   validateLogin,
   validateRegistration,
@@ -13,7 +13,6 @@ const createUser = async (req, res) => {
     return res
       .status(400)
       .json({ success: false, message: error.details[0].message });
-
   try {
     const { username, email, password, role } = req.body;
 
@@ -28,12 +27,12 @@ const createUser = async (req, res) => {
       }
     }
 
-    const hashedPassword = await hashPassword(password)
+    const hashedPassword = await hashPassword(password);
 
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
     if (existingUser)
       return res
-        .status(401)
+        .status(400)
         .json({ success: false, message: "Email or Username exists." });
 
     const newUser = new User({
@@ -109,6 +108,7 @@ const revokeAdminPermission = async (req, res) => {
     return res
       .status(401)
       .json({ success: false, message: "Access denied. User not admin." });
+
   try {
     const user = await User.findOne({ email });
     if (!user)
@@ -116,6 +116,11 @@ const revokeAdminPermission = async (req, res) => {
         .status(404)
         .json({ success: false, message: "User not found." });
 
+    if (user.role == "user") {
+      return res
+        .status(400)
+        .json({ success: false, message: "User is already a regular user." });
+    }
     user.role = "user";
     await user.save();
     res
