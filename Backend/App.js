@@ -15,6 +15,8 @@ app.use(express.json())
 app.use('/auth/user', userRoute)
 app.use('/auth/admin', adminRouter)
 app.use('/auth/login', loginRoute)
+app.use('/auth/promote', adminRouter)
+app.use('/auth/revoke', adminRouter)
 
 connectDB().then(() => {
   app.listen(PORT, () => {

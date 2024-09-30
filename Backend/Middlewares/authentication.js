@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 const authenticate = (req, res, next) => {
-  const token = req.headers['Authorization']?.replace("Bearer ", "");
+  const token = req.headers['authorization']?.replace("Bearer ", "");
   if (!token) return res.status(401).json({ message: "Access denied. No token provided." });
 
   try {
@@ -16,7 +16,7 @@ const authenticate = (req, res, next) => {
 const authorize = (roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
-      return res.status(401).json({
+      return res.status(403).json({
         success: false,
         message: "Access denied. You are not allowed to access this service.",
       });
