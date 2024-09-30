@@ -93,6 +93,9 @@ const updatePermission = async (req, res) => {
       return res
         .status(404)
         .json({ success: false, message: "User not found." });
+
+    if(user.email == "orestengabo0@gmail.com")
+      return res.status(400).json({success: false, message: "Root admin cannot change role."})
     user.role = "admin";
     await user.save();
     res
@@ -115,6 +118,11 @@ const revokeAdminPermission = async (req, res) => {
       return res
         .status(404)
         .json({ success: false, message: "User not found." });
+
+    if (user.email == "orestengabo0@gmail.com")
+      return res
+        .status(400)
+        .json({ success: false, message: "Root admin cannot be a normal user." });
 
     if (user.role == "user") {
       return res
