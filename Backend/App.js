@@ -9,10 +9,10 @@ dotenv.config({ path: path.join(__dirname, "../.env") });
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-app.use(express.json())
-app.use('/api/auth', userRoute)
-app.use('/api/auth', userRoute)
-app.use('/api/auth/permissions', userRoute)
+app.use(express.json());
+app.use("/api/auth", userRoute);
+app.use("/api/auth", userRoute);
+app.use("/api/auth/permissions", userRoute);
 
 connectDB().then(() => {
   app.listen(PORT, () => {
