@@ -91,8 +91,14 @@ const updatePermission = async (req, res) => {
         .status(404)
         .json({ success: false, message: "User not found." });
 
-    if(user.email == "orestengabo0@gmail.com")
-      return res.status(400).json({success: false, message: "Root admin cannot change role."})
+    if (user.email == "orestengabo0@gmail.com")
+      return res
+        .status(400)
+        .json({ success: false, message: "Root admin cannot change role." });
+    if (user.role == "admin")
+      return res
+        .status(400)
+        .json({ success: false, message: "User is already admin" });
     user.role = "admin";
     await user.save();
     res
@@ -117,9 +123,10 @@ const revokeAdminPermission = async (req, res) => {
         .json({ success: false, message: "User not found." });
 
     if (user.email == "orestengabo0@gmail.com")
-      return res
-        .status(400)
-        .json({ success: false, message: "Root admin cannot be a normal user." });
+      return res.status(400).json({
+        success: false,
+        message: "Root admin cannot be a normal user.",
+      });
 
     if (user.role == "user") {
       return res
@@ -135,9 +142,30 @@ const revokeAdminPermission = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error." });
   }
 };
+
+const getCurrentUser = async (req, res) => {
+  try {
+    const currentUser = req.user;
+    if (!currentUser)
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found." });
+    const user = await User.findById(currentUser.id).select("-password");
+    if (!user)
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found." });
+
+    res.status(200).json({ success: true, user });
+  } catch (ex) {
+    res.status(500).json({ success: false, message: "Server error." });
+  }
+};
+
 module.exports = {
   createUser,
   loginUser,
   updatePermission,
   revokeAdminPermission,
+  getCurrentUser,
 };
