@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
-const bcrypt = require('bcryptjs')
-
+const { hashPassword } = require('../Security/hashPasswords')
+ 
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -23,15 +23,6 @@ const userSchema = new mongoose.Schema({
         default: 'user'
     }
 })
-
-const hashPassword = async (plainPassword) => {
-    try {
-      const salt = await bcrypt.genSalt(10);
-      await bcrypt.hash(plainPassword, salt);
-    } catch (error) {
-      console.error('Error hashing password:', error);
-    }
-};
 
 userSchema.pre('save', async function(next) {
     if(!this.isModified('password')) return next();

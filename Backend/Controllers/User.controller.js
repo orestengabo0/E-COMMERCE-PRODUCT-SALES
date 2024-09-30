@@ -94,7 +94,6 @@ const updatePermission = async (req, res) => {
       return res
         .status(404)
         .json({ success: false, message: "User not found." });
-
     user.role = "admin";
     await user.save();
     res
