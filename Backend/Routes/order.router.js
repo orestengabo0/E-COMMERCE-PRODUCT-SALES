@@ -1,4 +1,8 @@
-const express = require('express')
-const orderRoute = express.Router()
+const express = require("express");
+const { authenticate } = require("../Middlewares/authentication");
+const { createOrder } = require("../Controllers/Order.controller");
+const orderRoute = express.Router();
 
-orderRoute.post("/", async (req, res) => {})
+orderRoute.post("/create", authenticate, createOrder);
+
+module.exports = orderRoute;

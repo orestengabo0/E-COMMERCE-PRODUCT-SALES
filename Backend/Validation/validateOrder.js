@@ -7,11 +7,10 @@ const validateOrder = (order) => {
             Joi.object({
                 product: Joi.string().required(),
                 quantity: Joi.number().min(1).required(),
-                price: Joi.number().min(0).required()
             })
         ).required(),
         shippingAddress: Joi.object({
-            fullNames: Joi.string().required(),
+            street: Joi.string().required(),
             address: Joi.string().required(),
             city: Joi.string().required(),
             country: Joi.string().required()
