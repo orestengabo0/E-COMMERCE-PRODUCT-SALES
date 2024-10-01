@@ -1,6 +1,16 @@
 const Cart = require('../Models/cart.model')
 const { Product } = require('../Models/product.model')
 
+const getCartItems = async(req, res) => {
+    try {
+        const cart = await Cart.findOne({ user: req.user.id }).populate("items.product")
+        if(!cart) return res.status(404).json({success: false, message: "Cart not found."})
+        res.status(200).json({ success: false, data: cart.items })
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server error."})
+    }
+}
+
 const addToCart = async(req, res) => {
     const { productId, quantity = 1 } = req.body;
     try {
@@ -65,4 +75,29 @@ const updateCart = async (req, res) => {
         }
     }
 }
-module.exports = { addToCart, updateCart }
+
+const deleteFromCart = async (req, res) => {
+    const { itemId } = req.params;
+    try {
+      const cart = await Cart.findOne({ user: req.user.id });
+      if (!cart)
+        return res
+          .status(404)
+          .json({ success: false, message: "Cart not found." });
+  
+      const itemIndex = cart.items.findIndex(
+        (item) => item._id.toString() === itemId
+      );
+      if (itemIndex == -1)
+        return res
+          .status(404)
+          .json({ success: false, message: "Item not found in the cart" });
+      cart.items.splice(itemIndex, 1)
+      await cart.save();
+      res.status(200).json({ success: true, message: "Item remove from cart." });
+    } catch (error) {
+      console.error("Error: ", error);
+      res.status(500).json({ success: false, message: "Server error." });
+    }
+  }
+module.exports = { getCartItems, addToCart, updateCart, deleteFromCart }
