@@ -5,6 +5,7 @@ const path = require("path");
 const userRoute = require("./Routes/user.router.js");
 const productRoute = require("./Routes/product.router.js");
 const orderRoute = require("./Routes/order.router.js");
+const cartRoute = require("./Routes/cart.router.js");
 
 dotenv.config({ path: path.join(__dirname, "../.env") });
 
@@ -16,6 +17,7 @@ app.use("/api/auth", userRoute);
 app.use("/api/auth/permissions", userRoute);
 app.use('/api/products', productRoute)
 app.use("/api/orders", orderRoute)
+app.use("/api/cart", cartRoute)
 
 connectDB().then(() => {
   app.listen(PORT, () => {
