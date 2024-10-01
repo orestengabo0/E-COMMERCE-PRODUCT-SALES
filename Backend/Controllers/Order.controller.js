@@ -2,6 +2,19 @@ const { validateOrder } = require("../Validation/validateOrder");
 const Order = require("../Models/order.model");
 const { Product } = require("../Models/product.model");
 
+const getOrders = async (req, res) => {
+    try {
+      const orders = await Order.find();
+      if (!orders)
+        return res
+          .status(404)
+          .json({ success: false, message: "No order found." })
+      res.status(200).json({success: true, data: orders, message: "Orders found."})
+    } catch (error) {
+      res.status(500).json({success: false, message: "Server error."})
+    }
+  }
+
 const createOrder = async (req, res) => {
     const { error } = validateOrder(req.body);
     if (error)
@@ -49,4 +62,4 @@ const createOrder = async (req, res) => {
       res.status(500).json({ success: false, message: "Server error." });
     }
   }
-module.exports = { createOrder }
+module.exports = { createOrder, getOrders }
