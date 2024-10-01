@@ -6,12 +6,13 @@ const {
   revokeAdminPermission,
   getCurrentUser,
   getUserById,
+  getAllUsers,
 } = require("../Controllers/User.controller");
 const { authenticate, authorize } = require("../Middlewares/authentication");
 const { User } = require("../Models/user.model");
 const userRoute = express.Router();
 
-userRoute.get("/users", )
+userRoute.get("/users", getAllUsers)
 userRoute.get("/users/:id", authenticate, authorize(['admin']), getUserById);
 userRoute.get("/users/me", authenticate, getCurrentUser);
 userRoute.post("/register", createUser);
