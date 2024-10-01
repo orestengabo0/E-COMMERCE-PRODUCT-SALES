@@ -23,6 +23,11 @@ productRoute.delete(
   authorize(["admin"]),
   deleteProduct
 );
-productRoute.put("/update/:id", updateProduct);
+productRoute.put(
+  "/update/:id",
+  authenticate,
+  authorize(["admin"]),
+  updateProduct
+);
 
 module.exports = productRoute;
