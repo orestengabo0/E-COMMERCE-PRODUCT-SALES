@@ -2,7 +2,6 @@ const Joi = require('joi')
 
 const validateOrder = (order) => {
     const schema = Joi.object({
-        user: Joi.string().required(),
         products: Joi.array().items(
             Joi.object({
                 product: Joi.string().required(),
