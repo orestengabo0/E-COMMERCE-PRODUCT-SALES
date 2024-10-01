@@ -162,10 +162,25 @@ const getCurrentUser = async (req, res) => {
   }
 };
 
+const getUserById = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user)
+      return res
+        .status(400)
+        .json({ success: false, message: "No user found." });
+    res.status(200).json({success: true, data: user})
+  } catch (error) {
+    console.error("Error getting users ", error)
+    res.status(500).json({success: false, message: "Server error."})
+  }
+}
+
 module.exports = {
   createUser,
   loginUser,
   updatePermission,
   revokeAdminPermission,
   getCurrentUser,
+  getUserById
 };
