@@ -2,6 +2,20 @@ const { validateOrder } = require("../Validation/validateOrder");
 const Order = require("../Models/order.model");
 const { Product } = require("../Models/product.model");
 
+const getAllOrdersAsAdmin = async (req, res) => {
+  try {
+    const orders = await Order.find()
+      .populate("user", "username")
+      .populate("products.product", "name price");
+    if (!orders)
+      return res
+        .status(400)
+        .json({ success: false, message: "No orders found." });
+    res.status(200).json({ success: true, orders });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error." });
+  }
+};
 const getOrders = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -16,6 +30,21 @@ const getOrders = async (req, res) => {
     res
       .status(200)
       .json({ success: true, data: orders, message: "Orders found." });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error." });
+  }
+};
+
+const getOrderStatus = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { orderId } = req.params;
+    const order = await Order.findOne({ _id: orderId, user: userId });
+    if (!order)
+      return res
+        .status(400)
+        .json({ success: false, message: "No order found." });
+    res.status(200).json({ success: true, status: order.status });
   } catch (error) {
     res.status(500).json({ success: false, message: "Server error." });
   }
@@ -90,4 +119,40 @@ const cancelOrder = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error." });
   }
 };
-module.exports = { createOrder, getOrders, cancelOrder };
+
+const updateOrderStatus = async (req, res) => {
+  const { status } = req.body;
+  const validStatuses = [
+    "Pending",
+    "Processing",
+    "Shipped",
+    "Delivered",
+    "Canceled",
+  ];
+  try {
+    if (!validStatuses.includes(status))
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid status." });
+    const order = await Order.findById(req.params.orderId);
+    if (!order)
+      return res
+        .status(400)
+        .json({ success: false, message: "Order not found." });
+    order.status = status;
+    await order.save();
+    res
+      .status(200)
+      .json({ success: true, message: "Order status updated.", order });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error." });
+  }
+};
+module.exports = {
+  createOrder,
+  getOrders,
+  cancelOrder,
+  getOrderStatus,
+  getAllOrdersAsAdmin,
+  updateOrderStatus,
+};
