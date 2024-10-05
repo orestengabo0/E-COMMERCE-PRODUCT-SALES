@@ -1,0 +1,92 @@
+All APIs to test: 
+----API For:
+
+User authentication
+------------------------------------------------
+-- Root admin Login
+api: http://localhost:5000/api/auth/login
+Done
+
+-- Creating a new user
+api: http://localhost:5000/api/auth/register
+Done
+
+-- Logging in a user
+api: http://localhost:5000/api/auth/login
+Done
+
+-- Getting current logged in user
+api: http://localhost:5000/api/auth/users/me
+
+-- Authenticating user
+Generating the auth token and verify permissions using jwt.io
+
+-- Authorizing users
+Generating the auth token and verify permissions using jwt.io
+
+-- Admin hiring other already existing users to be admin
+api: http://localhost:5000/api/auth/grant/:userEmail
+
+-- Admin revoking admin permissions from other hired admins
+api: http://localhost:5000/api/auth/revoke/:userEmail
+
+Note: Root admin should always have admin permissions
+
+Admin panel
+-------------------------------------------------
+-- Getting all users by admin
+api: http://localhost:5000/api/auth/users
+
+-- Getting a specific user details
+api: http://localhost:5000/api/auth/users/:userId
+
+-- Creating a product by admin,
+api: http://localhost:5000/api/products/create
+
+-- Getting all created products by admin
+api: http://localhost:5000/api/products
+
+-- Updating product by name, price, category, brand etc... by admin
+api: http://localhost:5000/api/products/update/:productId
+
+-- Deleting a product by admin
+api: http://localhost:5000/api/products/delete/:productId
+
+-- Getting orders by admin
+api: http://localhost:5000/api/admin/orders
+
+-- Approving, canceling (changing order status)
+api: http://localhost:5000/api/products/admin/orders/:orderId/status
+
+User panel
+-------------------------------------------------
+-- Getting all products by normal users
+api: http://localhost:5000/api/products/myOrders
+
+    cart
+    -----------------------------------
+-- Getting cart items for authenticated user
+api: http://localhost:5000/api/cart
+
+-- Adding items to the cart for authenticated user
+api: http://localhost:5000/api/cart/add
+
+-- Updating items in the cart for authenticated user
+api: http://localhost:5000/api/cart/update/:itemId
+
+-- Removing items from cart by authenticated user
+api: http://localhost:5000/api/cart/delete/:itemId
+
+    orders
+    -----------------------------------
+-- Getting orders sent by user
+api: http://localhost:5000/api/orders/user/myOrders
+
+-- Creating order by user
+api: http://localhost:5000/api/orders/create
+
+-- Viewing order status by user
+api: http://localhost:5000/api/orders/user/myOrders/:orderId/status
+
+--Canceling order when it is still on Pending status only
+api: http://localhost:5000/api/orders/user/myOrders/:orderId/cancel

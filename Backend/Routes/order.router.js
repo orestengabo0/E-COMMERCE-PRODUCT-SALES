@@ -20,7 +20,7 @@ orderRoute.get(
 orderRoute.get("/user/myOrders", authenticate, getOrders);
 orderRoute.get("/user/myOrders/:orderId/status", authenticate, getOrderStatus);
 orderRoute.post("/create", authenticate, createOrder);
-orderRoute.delete("/:orderId/cancel", authenticate, cancelOrder);
+orderRoute.delete("/user/myOrders/:orderId/cancel", authenticate, cancelOrder);
 orderRoute.put(
   "/admin/orders/:orderId/status",
   authenticate,

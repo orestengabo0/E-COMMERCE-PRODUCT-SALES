@@ -14,7 +14,7 @@ const userRoute = express.Router();
 
 userRoute.get("/users", authenticate, authorize(["admin"]), getAllUsers);
 userRoute.get("/users/:id", authenticate, authorize(["admin"]), getUserById);
-userRoute.get("/users/me", authenticate, getCurrentUser);
+userRoute.get("/user/me", authenticate, getCurrentUser);
 userRoute.post("/register", createUser);
 userRoute.post("/login", loginUser);
 userRoute.put(
