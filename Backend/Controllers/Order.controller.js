@@ -34,6 +34,15 @@ const getOrders = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error." });
   }
 };
+const getOrderById = async(req, res) => {
+  try {
+    const products = await Order.findById(req.params.orderId)
+    if(!products) return res.status(404).json({ success: false, message: "No order found."})
+    res.status(200).json({ success: true, data: products})
+  } catch (error) {
+    res.status(500).json({success: false, message: "Server error."})
+  }
+}
 
 const getOrderStatus = async (req, res) => {
   try {
@@ -151,6 +160,7 @@ const updateOrderStatus = async (req, res) => {
 module.exports = {
   createOrder,
   getOrders,
+  getOrderById,
   cancelOrder,
   getOrderStatus,
   getAllOrdersAsAdmin,
