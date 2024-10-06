@@ -34,15 +34,18 @@ const getOrders = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error." });
   }
 };
-const getOrderById = async(req, res) => {
+const getOrderById = async (req, res) => {
   try {
-    const products = await Order.findById(req.params.orderId)
-    if(!products) return res.status(404).json({ success: false, message: "No order found."})
-    res.status(200).json({ success: true, data: products})
+    const products = await Order.findById(req.params.orderId);
+    if (!products)
+      return res
+        .status(404)
+        .json({ success: false, message: "No order found." });
+    res.status(200).json({ success: true, data: products });
   } catch (error) {
-    res.status(500).json({success: false, message: "Server error."})
+    res.status(500).json({ success: false, message: "Server error." });
   }
-}
+};
 
 const getOrderStatus = async (req, res) => {
   try {
@@ -78,6 +81,12 @@ const createOrder = async (req, res) => {
           success: false,
           message: `Product with id: ${item.product} was not found.`,
         });
+
+      if (item.quantity > product.stock)
+        return res
+          .status(400)
+          .json({ success: false, message: "Products not enough in stock." });
+
       const productPrice = product.price;
       const productTotal = productPrice * item.quantity;
       totalAmount += productTotal;
