@@ -11,13 +11,14 @@ const createNewProduct = async (req, res) => {
       .status(400)
       .json({ success: false, message: error.details[0].message });
   try {
-    const { name, description, price, category, stock, images, ratings } =
+    const { name, description, price, category, brand, stock, images, ratings } =
       req.body;
     const newProduct = new Product({
       name,
       description,
       price,
       category,
+      brand,
       stock,
       images,
       ratings,
