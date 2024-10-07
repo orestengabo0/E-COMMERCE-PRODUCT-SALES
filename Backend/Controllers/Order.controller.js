@@ -96,6 +96,8 @@ const createOrder = async (req, res) => {
         quantity: item.quantity,
         price: productPrice,
       });
+      product.stock -= item.quantity
+      await product.save()
     }
 
     const newOrder = new Order({
@@ -104,6 +106,7 @@ const createOrder = async (req, res) => {
       totalAmount,
       shippingAddress,
     });
+
     await newOrder.save();
     res.status(201).json({
       success: true,
