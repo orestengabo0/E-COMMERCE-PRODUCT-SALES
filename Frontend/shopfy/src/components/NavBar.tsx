@@ -14,9 +14,15 @@ import {
   useColorModeValue,
   InputRightElement,
   Kbd,
+  useDisclosure,
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerOverlay,
 } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
-import { FaRegSun, FaShoppingCart } from "react-icons/fa";
+import { FaBars, FaRegSun, FaShoppingCart } from "react-icons/fa";
 import { IoMdMoon } from "react-icons/io";
 import { FaRegHeart } from "react-icons/fa6";
 import { CiSearch } from "react-icons/ci";
@@ -24,8 +30,9 @@ import { useEffect, useRef } from "react";
 
 const NavBar = () => {
   const { colorMode, toggleColorMode } = useColorMode();
-  const logoBackground = useColorModeValue("none", "gray.800");
   const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.ctrlKey && event.key == "k") {
@@ -85,9 +92,15 @@ const NavBar = () => {
                 borderColor={"gray.300"}
                 ref={searchInputRef}
               />
-              <InputRightElement pointerEvents={"none"} marginRight={5} children={
-                <HStack><Kbd>Ctrl</Kbd> + <Kbd>K</Kbd></HStack>
-              }/>
+              <InputRightElement
+                pointerEvents={"none"}
+                marginRight={5}
+                children={
+                  <HStack>
+                    <Kbd>Ctrl</Kbd> + <Kbd>K</Kbd>
+                  </HStack>
+                }
+              />
             </InputGroup>
           </Box>
         </HStack>
@@ -109,13 +122,68 @@ const NavBar = () => {
           <Button onClick={toggleColorMode}>
             {colorMode === "light" ? <IoMdMoon color="teal" /> : <FaRegSun />}
           </Button>
+          <Box display={{ base: "block", md: "none" }}>
+            <IconButton
+              aria-label="Open Menu"
+              icon={<FaBars color="teal" />}
+              variant="ghost"
+              size="lg"
+              onClick={onOpen}
+            />
+
+            <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
+              <DrawerOverlay />
+              <DrawerContent maxWidth={"200px"}>
+                <DrawerCloseButton />
+                <DrawerBody>
+                  <HStack
+                    as={"nav"}
+                    spacing={4}
+                    flexDirection={"column"}
+                    alignItems="flex-start"
+                    padding={4}
+                    paddingTop={7}
+                  >
+                    <Link
+                      as={RouterLink}
+                      to={"/"}
+                      fontWeight={"semibold"}
+                      onClick={onClose}
+                    >
+                      Home
+                    </Link>
+                    <Link
+                      as={RouterLink}
+                      to={"/contacts"}
+                      fontWeight={"semibold"}
+                      onClick={onClose}
+                    >
+                      Contacts
+                    </Link>
+                    <Link
+                      as={RouterLink}
+                      to={"/about"}
+                      fontWeight={"semibold"}
+                      onClick={onClose}
+                    >
+                      About
+                    </Link>
+                    <Link
+                      as={RouterLink}
+                      to={"/signup"}
+                      fontWeight={"semibold"}
+                      onClick={onClose}
+                    >
+                      Signup
+                    </Link>
+                  </HStack>
+                </DrawerBody>
+              </DrawerContent>
+            </Drawer>
+          </Box>
         </HStack>
       </Flex>
-      <Box
-      borderTop={"2px solid"}
-      borderColor={"gray.300"}
-      width={"100%"}
-      />
+      <Box borderTop={"2px solid"} borderColor={"gray.300"} width={"100%"} />
     </Box>
   );
 };

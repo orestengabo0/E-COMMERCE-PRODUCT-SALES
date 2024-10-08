@@ -1,17 +1,17 @@
 import {
   Box,
+  Button,
   HStack,
   Image,
   Link,
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import apple from "../assets/1200px-Apple_gray_logo 1.svg";
 import phone from "../assets/hero_endframe__cvklg0xk3w6e_large_2-removebg-preview.png";
-import samsung from "../assets/hero_endframe__cvklg0xk3w6e_large_2-removebg-preview.png"; // example for second card logo
 import samsungPhone from "../assets/hero_endframe__cvklg0xk3w6e_large_2-removebg-preview.png"; // example for second card image
-import { Link as RouterLink } from "react-router-dom";
+import { ArrowForwardIcon } from "@chakra-ui/icons";
 
 const AdvertiseCard = () => {
   const cardBackGround = useColorModeValue("black", "black");
@@ -92,9 +92,8 @@ const AdvertiseCard = () => {
                 <Text fontSize={"25"} fontWeight={"bold"} color={textColor}>
                   {card.discount}
                 </Text>
-                <Link as={RouterLink} to={card.link} color={textColor}>
-                  Shop Now
-                </Link>
+                
+                <Button rightIcon={<ArrowForwardIcon />} colorScheme="teal" variant={"outline"}>Shop Now</Button>
               </Box>
               <Box>
                 <Image src={card.productImage} />
