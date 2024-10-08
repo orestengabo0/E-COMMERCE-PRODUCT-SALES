@@ -5,6 +5,7 @@ const {
 } = require("../Validation/validateProduct");
 const { Product } = require("../Models/product.model");
 const Category = require("../Models/category.model");
+const Brand = require("../Models/brand.model");
 
 const createNewProduct = async (req, res) => {
   const { error } = validateCreateProduct(req.body);
@@ -13,16 +14,18 @@ const createNewProduct = async (req, res) => {
       .status(400)
       .json({ success: false, message: error.details[0].message });
   try {
-    const { name, description, price, categoryId, brand, stock, images } =
+    const { name, description, price, categoryId, brandId, stock, images } =
       req.body;
     const category = await Category.findById(categoryId)
-    if(!categoryId) return res.status(404).json({ success: false, message: "Category not found."})
+    if(!category) return res.status(404).json({ success: false, message: "Category not found."})
+    const brand = await Brand.findById({ brandId })
+    if(!brand) return res.status(404).json({ success: false, message: "No brand found."})
     const newProduct = new Product({
       name,
       description,
       price,
       category: categoryId,
-      brand,
+      brand: brandId,
       stock,
       images,
       ratings: {
@@ -100,7 +103,7 @@ const rateProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find().populate('category','name');
+    const products = await Product.find().populate('category brand','name name');
     if (!products)
       return res
         .status(404)

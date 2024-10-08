@@ -25,8 +25,9 @@ const productSchema = new mongoose.Schema({
         min: 0
     },
     brand: {
-        type: String,
-        trim: true
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "Brand"
     },
     images: [
         {
