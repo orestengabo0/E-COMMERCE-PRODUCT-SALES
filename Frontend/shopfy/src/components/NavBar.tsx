@@ -1,4 +1,5 @@
 import {
+  Text,
   Box,
   Button,
   Flex,
@@ -13,21 +14,47 @@ import {
   useColorMode,
   useColorModeValue,
 } from "@chakra-ui/react";
-import logo from "../assets/Logo.svg";
 import { Link as RouterLink } from "react-router-dom";
 import { FaRegSun, FaShoppingCart } from "react-icons/fa";
-import { IoMdMoon } from "react-icons/io"
+import { IoMdMoon } from "react-icons/io";
 import { FaRegHeart } from "react-icons/fa6";
 import { CiSearch } from "react-icons/ci";
+import { useEffect, useRef } from "react";
 
 const NavBar = () => {
-    const { colorMode, toggleColorMode } = useColorMode()
-    const logoBackground = useColorModeValue("white","gray.800")
+  const { colorMode, toggleColorMode } = useColorMode();
+  const logoBackground = useColorModeValue("none", "gray.800");
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key == "k") {
+        event.preventDefault();
+        if (searchInputRef.current) {
+          searchInputRef.current.focus();
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
   return (
     <Box>
       <Flex h={16} alignItems={"center"} justifyContent={"center"}>
-        <Box marginRight={8}>
-          <Image bg={logoBackground} src={logo} alt="Logo" boxSize={"100px"} />
+        <Box marginRight={10}>
+          <Text
+            fontSize={{ base: "22", sm: "28" }}
+            fontWeight={"bold"}
+            textTransform={"uppercase"}
+            textAlign={"center"}
+            bgGradient={"linear(to-r, cyan.400, blue.500)"}
+            bgClip={"text"}
+          >
+            <Link as={RouterLink} to={"/"}>
+              🛒Shopfy
+            </Link>
+          </Text>
         </Box>
         {/* Navigation links*/}
         <HStack spacing={8} alignItems={"center"}>
@@ -56,6 +83,7 @@ const NavBar = () => {
               <Input
                 placeholder="Search product...."
                 borderColor={"gray.300"}
+                ref={searchInputRef}
               />
             </InputGroup>
           </Box>
@@ -76,7 +104,7 @@ const NavBar = () => {
             size="lg"
           />
           <Button onClick={toggleColorMode}>
-            { colorMode === "light" ? <IoMdMoon /> : <FaRegSun />}
+            {colorMode === "light" ? <IoMdMoon color="teal" /> : <FaRegSun />}
           </Button>
         </HStack>
       </Flex>
