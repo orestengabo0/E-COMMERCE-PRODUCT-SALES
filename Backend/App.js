@@ -6,6 +6,7 @@ const userRoute = require("./Routes/user.router.js");
 const productRoute = require("./Routes/product.router.js");
 const orderRoute = require("./Routes/order.router.js");
 const cartRoute = require("./Routes/cart.router.js");
+const categoryRoute = require("./Routes/category.router.js");
 
 dotenv.config({ path: path.join(__dirname, "../.env") });
 
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use("/api/auth", userRoute);
 app.use("/api/auth/permissions", userRoute);
 app.use('/api/products', productRoute)
+app.use("/api/categories", categoryRoute)
 app.use("/api/orders", orderRoute)
 app.use("/api/cart", cartRoute)
 
