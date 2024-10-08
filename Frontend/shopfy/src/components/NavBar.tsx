@@ -5,7 +5,6 @@ import {
   Flex,
   HStack,
   IconButton,
-  Image,
   Input,
   InputGroup,
   InputLeftElement,
@@ -13,6 +12,8 @@ import {
   Spacer,
   useColorMode,
   useColorModeValue,
+  InputRightElement,
+  Kbd,
 } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import { FaRegSun, FaShoppingCart } from "react-icons/fa";
@@ -57,7 +58,7 @@ const NavBar = () => {
           </Text>
         </Box>
         {/* Navigation links*/}
-        <HStack spacing={8} alignItems={"center"}>
+        <HStack spacing={7} alignItems={"center"}>
           <HStack as={"nav"} spacing={4} display={{ base: "none", md: "flex" }}>
             <Link as={RouterLink} to={"/"} fontWeight={"semibold"}>
               Home
@@ -73,7 +74,6 @@ const NavBar = () => {
             </Link>
           </HStack>
           <Spacer />
-          {/* Search Bar */}
           <Box display={{ base: "none", md: "block" }}>
             <InputGroup maxW={"300px"}>
               <InputLeftElement
@@ -85,6 +85,9 @@ const NavBar = () => {
                 borderColor={"gray.300"}
                 ref={searchInputRef}
               />
+              <InputRightElement pointerEvents={"none"} marginRight={5} children={
+                <HStack><Kbd>Ctrl</Kbd> + <Kbd>K</Kbd></HStack>
+              }/>
             </InputGroup>
           </Box>
         </HStack>
@@ -108,6 +111,11 @@ const NavBar = () => {
           </Button>
         </HStack>
       </Flex>
+      <Box
+      borderTop={"2px solid"}
+      borderColor={"gray.300"}
+      width={"100%"}
+      />
     </Box>
   );
 };
