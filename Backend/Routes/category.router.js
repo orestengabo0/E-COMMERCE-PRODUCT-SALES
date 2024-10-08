@@ -4,6 +4,7 @@ const {
   createCategory,
   getCategories,
   updateCategory,
+  deleteCategory,
 } = require("../Controllers/Category.controller");
 const Category = require("../Models/category.model");
 const { validateCategory } = require("../Validation/validateCategory");
@@ -20,5 +21,11 @@ categoryRoute.put(
   authenticate,
   authorize(["admin"]),
   updateCategory
+);
+categoryRoute.delete(
+  "/delete/:categoryId",
+  authenticate,
+  authorize(["admin"]),
+  deleteCategory
 );
 module.exports = categoryRoute;
