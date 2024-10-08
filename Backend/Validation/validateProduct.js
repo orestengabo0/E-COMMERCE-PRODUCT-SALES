@@ -5,7 +5,7 @@ const validateCreateProduct = (product) => {
     name: Joi.string().required(),
     description: Joi.string().trim().max(500).optional(),
     price: Joi.number().required().min(0),
-    category: Joi.string().min(2).max(50).required(),
+    categoryId: Joi.string().min(2).max(50).required(),
     stock: Joi.number().integer().required().min(0),
     brand: Joi.string().required(),
     images: Joi.array()

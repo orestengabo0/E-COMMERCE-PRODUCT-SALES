@@ -13,15 +13,15 @@ const createNewProduct = async (req, res) => {
       .status(400)
       .json({ success: false, message: error.details[0].message });
   try {
-    const { name, description, price, category, brand, stock, images } =
+    const { name, description, price, categoryId, brand, stock, images } =
       req.body;
-    const categoryId = await Category.findById(category)
+    const category = await Category.findById(categoryId)
     if(!categoryId) return res.status(404).json({ success: false, message: "Category not found."})
     const newProduct = new Product({
       name,
       description,
       price,
-      category,
+      category: categoryId,
       brand,
       stock,
       images,
@@ -100,7 +100,7 @@ const rateProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find();
+    const products = await Product.find().populate('category','name');
     if (!products)
       return res
         .status(404)

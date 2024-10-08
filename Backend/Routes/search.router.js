@@ -1,5 +1,7 @@
 const express = require("express");
 const { Product } = require("../Models/product.model");
+const Category = require("../Models/category.model");
+const { User } = require("../Models/user.model");
 const searchRoute = express.Router();
 
 searchRoute.get("/search", async (req, res) => {
@@ -20,7 +22,7 @@ searchRoute.get("/search", async (req, res) => {
         });
         break;
       case "category":
-        result = await Product.find({
+        result = await Category.find({
           $or: [{ name: { $regex: query, $options: "i" } }],
         });
         break;
@@ -29,7 +31,24 @@ searchRoute.get("/search", async (req, res) => {
           return res
             .status(400)
             .json({ success: false, message: "Access denied." });
-        result = await Product
+        result = await User.find({
+          $or: [
+            { username: { $regex: query, $options: "i" } },
+            { email: { $regex: query, $options: "i" } },
+          ],
+        });
+        break;
+      default:
+        res
+          .status(400)
+          .json({ success: false, message: "Invalid type specified." });
     }
-  } catch (error) {}
+    if (result.length == 0)
+      return res
+        .status(404)
+        .json({ success: false, message: `No ${type}s found.` });
+    res.status(200).json({ success: true, result})
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error."})
+  }
 });
