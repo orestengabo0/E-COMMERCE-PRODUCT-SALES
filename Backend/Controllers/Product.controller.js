@@ -4,6 +4,7 @@ const {
   validateRatingProduct,
 } = require("../Validation/validateProduct");
 const { Product } = require("../Models/product.model");
+const Category = require("../Models/category.model");
 
 const createNewProduct = async (req, res) => {
   const { error } = validateCreateProduct(req.body);
@@ -14,6 +15,8 @@ const createNewProduct = async (req, res) => {
   try {
     const { name, description, price, category, brand, stock, images } =
       req.body;
+    const categoryId = await Category.findById(category)
+    if(!categoryId) return res.status(404).json({ success: false, message: "Category not found."})
     const newProduct = new Product({
       name,
       description,
