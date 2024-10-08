@@ -1,6 +1,7 @@
 const {
   validateCreateProduct,
   validateUpdateProduct,
+  validateRatingProduct,
 } = require("../Validation/validateProduct");
 const { Product } = require("../Models/product.model");
 
@@ -11,7 +12,7 @@ const createNewProduct = async (req, res) => {
       .status(400)
       .json({ success: false, message: error.details[0].message });
   try {
-    const { name, description, price, category, brand, stock, images, ratings } =
+    const { name, description, price, category, brand, stock, images } =
       req.body;
     const newProduct = new Product({
       name,
@@ -21,7 +22,11 @@ const createNewProduct = async (req, res) => {
       brand,
       stock,
       images,
-      ratings,
+      ratings: {
+        average: 0,
+        count: 0,
+        users: [],
+      },
     });
     await newProduct.save();
     res
@@ -29,6 +34,63 @@ const createNewProduct = async (req, res) => {
       .json({ success: true, message: "Product created successfully." });
   } catch (error) {
     console.error("Error creating user ", error);
+    res.status(500).json({ success: false, message: "Server error." });
+  }
+};
+
+const rateProduct = async (req, res) => {
+  const { error } = validateRatingProduct(req.body);
+  if (error)
+    return res
+      .status(400)
+      .json({ success: false, message: error.details[0].message });
+  try {
+    const userId = req.user.id;
+    if (!userId)
+      return res
+        .status(404)
+        .json({ success: false, message: "No user found." });
+
+    const { productId, rating } = req.body;
+    if (rating < 1 || rating > 5)
+      return res
+        .status(400)
+        .json({ success: false, message: "Ratings must be 1 to 5." });
+    const product = await Product.findById(productId);
+    if (!product)
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found." });
+
+    if (Array.isArray(product.ratings.users)) product.ratings.users = [];
+
+    const existingRating = product.ratings.users.find(
+      (r) => r.user.toString() === userId
+    );
+    if (existingRating) {
+      existingRating.rating = rating;
+    } else {
+      product.ratings.users.push({
+        user: userId,
+        product: productId,
+        rating,
+      });
+      product.ratings.count += 1;
+    }
+    const totalRatings = product.ratings.users.length
+      ? product.ratings.users.reduce((sum, r) => sum + r.rating, 0)
+      : 0;
+
+    product.ratings.average = totalRatings / product.ratings.count;
+    await product.save();
+    res.status(200).json({
+      success: true,
+      message: "Product rated successfully.",
+      product: product.name,
+      rating: product.ratings
+    });
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ success: false, message: "Server error." });
   }
 };
@@ -103,4 +165,5 @@ module.exports = {
   getProduct,
   deleteProduct,
   updateProduct,
+  rateProduct,
 };

@@ -6,6 +6,7 @@ const {
   getProduct,
   deleteProduct,
   updateProduct,
+  rateProduct,
 } = require("../Controllers/Product.controller");
 const productRoute = express.Router();
 
@@ -17,6 +18,7 @@ productRoute.post(
   authorize(["admin"]),
   createNewProduct
 );
+productRoute.post("/rate", authenticate, rateProduct)
 productRoute.delete(
   "/delete/:id",
   authenticate,

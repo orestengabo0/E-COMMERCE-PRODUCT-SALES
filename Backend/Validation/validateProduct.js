@@ -15,16 +15,7 @@ const validateCreateProduct = (product) => {
           altText: Joi.string().trim().required(),
         })
       )
-      .optional(),
-    ratings: Joi.array()
-      .items(
-        Joi.object({
-          user: Joi.string().optional(),
-          rating: Joi.number().min(1).max(5).required(),
-          comment: Joi.string().trim().required(),
-        })
-      )
-      .optional(),
+      .optional()
   });
   return schema.validate(product);
 };
@@ -44,17 +35,16 @@ const validateUpdateProduct = (product) => {
           altText: Joi.string().trim().optional(),
         })
       )
-      .optional(),
-    ratings: Joi.array()
-      .items(
-        Joi.object({
-          user: Joi.string().optional(),
-          rating: Joi.number().min(1).max(5).optional(),
-          comment: Joi.string().trim().optional(),
-        })
-      )
-      .optional(),
+      .optional()
   });
   return schema.validate(product);
 };
-module.exports = {validateCreateProduct, validateUpdateProduct};
+
+const validateRatingProduct = (rating) => {
+  const schema = Joi.object({
+      productId: Joi.string().required(),
+      rating: Joi.number().min(1).max(5).required()
+  })
+  return schema.validate(rating)
+}
+module.exports = {validateCreateProduct, validateUpdateProduct, validateRatingProduct};
