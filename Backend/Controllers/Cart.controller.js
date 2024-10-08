@@ -1,5 +1,7 @@
 const Cart = require('../Models/cart.model')
+const Order = require('../Models/order.model')
 const { Product } = require('../Models/product.model')
+const { validateOrder } = require('../Validation/validateOrder')
 
 const getCartItems = async(req, res) => {
     try {
@@ -76,6 +78,63 @@ const updateCart = async (req, res) => {
     }
 }
 
+const checkout = async (req, res) => {
+    const { error } = validateOrder(req.body);
+    if (error)
+      return res
+        .status(400)
+        .json({ success: false, message: error.details[0].message });
+    try {
+      const userId = req.user.id;
+      const { products, shippingAddress } = req.body;
+      let totalAmount = 0;
+      const updatedProducts = [];
+  
+      for (const item of products) {
+        const product = await Product.findById(item.product);
+        if (!product)
+          return res.status(404).json({
+            success: false,
+            message: `Product with id: ${item.product} was not found.`,
+          });
+  
+        if (item.quantity > product.stock)
+          return res
+            .status(400)
+            .json({ success: false, message: "Products not enough in stock." });
+  
+        const productPrice = product.price;
+        const productTotal = productPrice * item.quantity;
+        totalAmount += productTotal;
+  
+        updatedProducts.push({
+          product: item.product,
+          quantity: item.quantity,
+          price: productPrice,
+        });
+        product.stock -= item.quantity
+        await product.save()
+      }
+  
+      const newOrder = new Order({
+        user: userId,
+        products: updatedProducts,
+        totalAmount,
+        shippingAddress,
+      });
+  
+      await newOrder.save();
+      res.status(201).json({
+        success: true,
+        message: "Order sent successfully.",
+        order: newOrder,
+      });
+    } catch (error) {
+        console.error(error)
+      res.status(500).json({ success: false, message: "Server error." });
+    }
+  };
+
 const deleteFromCart = async (req, res) => {
     const { itemId } = req.params;
     try {
@@ -100,4 +159,4 @@ const deleteFromCart = async (req, res) => {
       res.status(500).json({ success: false, message: "Server error." });
     }
   }
-module.exports = { getCartItems, addToCart, updateCart, deleteFromCart }
+module.exports = { getCartItems, addToCart, updateCart, deleteFromCart, checkout }
