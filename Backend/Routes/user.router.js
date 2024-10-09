@@ -9,7 +9,6 @@ const {
   getAllUsers,
 } = require("../Controllers/User.controller");
 const { authenticate, authorize } = require("../Middlewares/authentication");
-const { User } = require("../Models/user.model");
 const userRoute = express.Router();
 
 userRoute.get("/users", authenticate, authorize(["admin"]), getAllUsers);
