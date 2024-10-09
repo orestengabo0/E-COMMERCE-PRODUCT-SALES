@@ -12,7 +12,7 @@ const HomePage = () => {
         <Box
           borderLeft="2px solid"
           borderColor="gray.300"
-          height="auto"
+          height="270px"
           mx={4}
           display={{ base: "none", md: "block" }}
         />

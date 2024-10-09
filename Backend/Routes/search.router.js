@@ -2,6 +2,8 @@ const express = require("express");
 const { Product } = require("../Models/product.model");
 const Category = require("../Models/category.model");
 const { User } = require("../Models/user.model");
+const Brand = require("../Models/brand.model");
+const { Query } = require("mongoose");
 const searchRoute = express.Router();
 
 searchRoute.get("/search", async (req, res) => {
@@ -38,6 +40,11 @@ searchRoute.get("/search", async (req, res) => {
           ],
         });
         break;
+      case "brand":
+        result = await Brand.find({
+          $or: [{ name: { $regex: query, $options: "i" } }],
+        });
+        break;
       default:
         res
           .status(400)
@@ -47,8 +54,8 @@ searchRoute.get("/search", async (req, res) => {
       return res
         .status(404)
         .json({ success: false, message: `No ${type}s found.` });
-    res.status(200).json({ success: true, result})
+    res.status(200).json({ success: true, result });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Server error."})
+    res.status(500).json({ success: false, message: "Server error." });
   }
 });
