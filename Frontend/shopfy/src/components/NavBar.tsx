@@ -76,7 +76,7 @@ const NavBar = () => {
             <Link as={RouterLink} to={"/about"} fontWeight={"semibold"}>
               About
             </Link>
-            <Link as={RouterLink} to={"/signup"} fontWeight={"semibold"}>
+            <Link as={RouterLink} to={"/register"} fontWeight={"semibold"}>
               Signup
             </Link>
           </HStack>
