@@ -11,6 +11,7 @@
   "dependencies": {
     "@chakra-ui/icons": "^2.2.4",
     "axios": "^1.7.7",
+    "jwt-decode": "^4.0.0",
     "qrcode.react": "^4.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

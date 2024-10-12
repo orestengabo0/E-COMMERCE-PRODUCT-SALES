@@ -10,13 +10,49 @@ import {
   InputGroup,
   InputRightElement,
   Button,
+  useToast,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { useUserStore } from "../stores/user";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const { loginUser } = useUserStore();
+  const [userData, setUserData] = useState({
+    email: "",
+    password: "",
+  });
   const [viewPassword, setViewPassword] = useState(false);
   const handleViewPassword = () => {
     setViewPassword((state) => !state);
+  };
+  const toast = useToast();
+  const handleLoginUser = async () => {
+    const { success, message, role } = await loginUser(userData);
+    if (!success) {
+      toast({
+        title: "Error",
+        description: message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: message,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      console.log("User role: ", role)
+      if (role === "admin") {
+        navigate("/admin");
+      } else if (role === "user") {
+        navigate("/user");
+      }
+    }
   };
   return (
     <Container maxW={"container.sm"} marginTop={10} marginBottom={10}>
@@ -32,11 +68,22 @@ const Login = () => {
         bg={useColorModeValue("white", "gray.700")}
       >
         <VStack spacing={4}>
-          <Input placeholder="Email" type="email" />
+          <Input
+            placeholder="Email"
+            type="email"
+            value={userData.email}
+            onChange={(e) =>
+              setUserData({ ...userData, email: e.target.value })
+            }
+          />
           <InputGroup>
             <Input
               type={viewPassword ? "text" : "password"}
               placeholder="Password"
+              value={userData.password}
+              onChange={(e) =>
+                setUserData({ ...userData, password: e.target.value })
+              }
             />
             <InputRightElement
               children={
@@ -48,7 +95,9 @@ const Login = () => {
               }
             />
           </InputGroup>
-          <Button w={"full"} bg={"teal"}>Login</Button>
+          <Button w={"full"} bg={"teal"} onClick={handleLoginUser}>
+            Login
+          </Button>
         </VStack>
       </Box>
     </Container>

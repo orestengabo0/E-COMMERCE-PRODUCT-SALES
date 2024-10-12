@@ -170,7 +170,7 @@ const NavBar = () => {
                     </Link>
                     <Link
                       as={RouterLink}
-                      to={"/signup"}
+                      to={"/register"}
                       fontWeight={"semibold"}
                       onClick={onClose}
                     >
