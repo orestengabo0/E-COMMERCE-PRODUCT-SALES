@@ -14,14 +14,50 @@ import {
   HStack,
   Flex,
   Spacer,
+  useToast,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { useState } from "react";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { useUserStore } from "../stores/user";
 
 const Register = () => {
+  const navigate = useNavigate()
+  const { createUser } = useUserStore();
+  const [newUser, setNewUser] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
   const [viewPassword, setViewPassword] = useState(false);
   const handleViewPassword = () => {
     setViewPassword((state) => !state);
+  };
+  const toast = useToast();
+  const handleCreateUser = async () => {
+    const { success, message } = await createUser(newUser);
+    if (!success) {
+      toast({
+        title: "Error",
+        description: message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: message,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      navigate("/login")
+    }
+    setNewUser({
+      username: "",
+      email: "",
+      password: "",
+    });
   };
   return (
     <Container maxW={"container.sm"} marginTop={10} marginBottom={10}>
@@ -37,12 +73,28 @@ const Register = () => {
         bg={useColorModeValue("white", "gray.700")}
       >
         <VStack spacing={4}>
-          <Input name="name" placeholder="Name" />
-          <Input type="email" placeholder="Email" />
+          <Input
+            name="name"
+            placeholder="Name"
+            value={newUser.username}
+            onChange={(e) =>
+              setNewUser({ ...newUser, username: e.target.value })
+            }
+          />
+          <Input
+            type="email"
+            placeholder="Email"
+            value={newUser.email}
+            onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+          />
           <InputGroup>
             <Input
               type={viewPassword ? "text" : "password"}
               placeholder="Password"
+              value={newUser.password}
+              onChange={(e) =>
+                setNewUser({ ...newUser, password: e.target.value })
+              }
             />
             <InputRightElement
               children={
@@ -54,13 +106,15 @@ const Register = () => {
               }
             />
           </InputGroup>
-          <Button w={"full"} bg={"teal"}>
+          <Button w={"full"} bg={"teal"} onClick={handleCreateUser}>
             Create Account
           </Button>
         </VStack>
         <Flex marginTop={5} justifyContent={"center"}>
           <Text>Already have account?</Text>
-          <Link as={RouterLink} to={"/login"}>Login</Link>
+          <Link as={RouterLink} to={"/login"}>
+            Login
+          </Link>
         </Flex>
       </Box>
     </Container>
