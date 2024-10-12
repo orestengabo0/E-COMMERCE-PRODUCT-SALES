@@ -11,7 +11,6 @@ import {
   Link,
   Spacer,
   useColorMode,
-  useColorModeValue,
   InputRightElement,
   Kbd,
   useDisclosure,
@@ -20,15 +19,26 @@ import {
   DrawerCloseButton,
   DrawerContent,
   DrawerOverlay,
+  Menu,
+  MenuButton,
+  Avatar,
+  MenuList,
+  MenuItem,
 } from "@chakra-ui/react";
-import { Link as RouterLink } from "react-router-dom";
+import { LuUser2 } from "react-icons/lu";
+import { Icon } from "@chakra-ui/react";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { FaBars, FaRegSun, FaShoppingCart } from "react-icons/fa";
 import { IoMdMoon } from "react-icons/io";
 import { FaRegHeart } from "react-icons/fa6";
 import { CiSearch } from "react-icons/ci";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useUserStore } from "../stores/user";
 
 const NavBar = () => {
+  const isLoggedIn = useUserStore((state) => state.isLogggedIn)
+  const logoutUser = useUserStore((state) => state.logoutUser)
+  const navigate = useNavigate()
   const { colorMode, toggleColorMode } = useColorMode();
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -47,6 +57,10 @@ const NavBar = () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
+  const handleLogout = () => {
+    logoutUser()
+    navigate("/login")
+  }
   return (
     <Box>
       <Flex h={16} alignItems={"center"} justifyContent={"center"}>
@@ -122,6 +136,23 @@ const NavBar = () => {
           <Button onClick={toggleColorMode}>
             {colorMode === "light" ? <IoMdMoon color="teal" /> : <FaRegSun />}
           </Button>
+          {isLoggedIn && (
+            <Box>
+              <Menu>
+                <MenuButton
+                  as={IconButton}
+                  aria-label="Profile options"
+                  icon={<Avatar size={"sm"} />}
+                  variant={"outline"}
+                />
+                <MenuList>
+                  <MenuItem onClick={() => navigate("/profile")}>View Profile</MenuItem>
+                  <MenuItem>My Orders</MenuItem>
+                  <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                </MenuList>
+              </Menu>
+            </Box>
+          )}
           <Box display={{ base: "block", md: "none" }}>
             <IconButton
               aria-label="Open Menu"

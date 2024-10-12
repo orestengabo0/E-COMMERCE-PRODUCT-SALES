@@ -25,12 +25,17 @@ interface ApiResponse {
 
 interface UserState {
   users: User[];
+  isLogggedIn: boolean;
+  role: string | null;
   createUser: (user: User) => Promise<{ success: boolean; message: string }>;
   loginUser: (user: UserLogin) => Promise<{ success: boolean; message: string, role?: string}>;
+  logoutUser: () => void
 }
 
 export const useUserStore = create<UserState>((set) => ({
   users: [],
+  isLogggedIn: false,
+  role: null,
   createUser: async (user) => {
     if (!user.username || !user.email || !user.password) {
       return { success: false, message: "Please fill in all fields." };
@@ -78,6 +83,7 @@ export const useUserStore = create<UserState>((set) => ({
         localStorage.setItem("authToken", token)
         const decodedToken: DecodeToken = jwtDecode(token)
         const { role } = decodedToken
+        set({ isLogggedIn: true, role})
         return { success: true, message: "Login successful.", role };
       }
       return { success: false, message: "Login failed." };
@@ -85,4 +91,8 @@ export const useUserStore = create<UserState>((set) => ({
       return { success: false, message: "Something went wrong." };
     }
   },
+  logoutUser: () => {
+    localStorage.removeItem("authToken")
+    set({ isLogggedIn: false, users: []})
+  }
 }));

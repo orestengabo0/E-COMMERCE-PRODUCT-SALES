@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Container, Flex, SimpleGrid, Spinner, Alert, AlertIcon } from "@chakra-ui/react";
+import { Box, Container, Flex, SimpleGrid, Alert, AlertIcon } from "@chakra-ui/react";
 import AdvertiseCard from "../components/AdvertiseCard";
 import SortSelector from "../components/SortSelector";
 import ProductCard from "../components/ProductCard";
@@ -11,7 +11,6 @@ const HomePage = () => {
   const [likedProducts, setLikedProducts] = useState<Set<string>>(new Set());
   const skeletons = [1,2,3,4];
 
-
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
@@ -20,7 +19,6 @@ const HomePage = () => {
     console.log(`Clicked product with id: ${productId}`)
   };
 
-  // if (isLoading) return <Spinner size="xl" />;
   if (error)
     return (
       <Alert status="error">
