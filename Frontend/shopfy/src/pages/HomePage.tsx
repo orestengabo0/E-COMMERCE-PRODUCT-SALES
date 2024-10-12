@@ -1,9 +1,34 @@
-import { Box, Container, Flex, SimpleGrid } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import { Box, Container, Flex, SimpleGrid, Spinner, Alert, AlertIcon } from "@chakra-ui/react";
 import AdvertiseCard from "../components/AdvertiseCard";
 import SortSelector from "../components/SortSelector";
 import ProductCard from "../components/ProductCard";
+import { useProductStore, Product } from "../stores/product";
+import ProductCardSkeleton from "../components/ProductCardSkeleton";
 
 const HomePage = () => {
+  const { products, fetchProducts, isLoading, error } = useProductStore();
+  const [likedProducts, setLikedProducts] = useState<Set<string>>(new Set());
+  const skeletons = [1,2,3,4];
+
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
+
+  const handleLikeClick = (productId: string) => {
+    console.log(`Clicked product with id: ${productId}`)
+  };
+
+  // if (isLoading) return <Spinner size="xl" />;
+  if (error)
+    return (
+      <Alert status="error">
+        <AlertIcon />
+        {error}
+      </Alert>
+    );
+
   return (
     <Container maxW={"container.xl"}>
       <Flex>
@@ -21,8 +46,18 @@ const HomePage = () => {
           <AdvertiseCard />
         </Box>
       </Flex>
-      <SimpleGrid columns={{ sm: 2, md: 3 }} spacing={10}>
-        <ProductCard />
+      <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} w={"full"} spacing={5}>
+        {isLoading && skeletons.map((skeleton) => (
+          <ProductCardSkeleton key={skeleton} />
+        ))}
+        {products.map((product: Product) => (
+          <ProductCard
+            key={product._id}
+            product={product}
+            isLiked={likedProducts.has(product._id)}
+            onLikeClick={handleLikeClick}
+          />
+        ))}
       </SimpleGrid>
     </Container>
   );
