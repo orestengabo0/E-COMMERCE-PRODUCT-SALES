@@ -142,7 +142,7 @@ const Footer = () => {
         </HStack>
       </Container>
       <Text fontSize="sm" mt={4} textAlign={"center"}>
-        © 2024 Your Company. All rights reserved.
+        © 2024 SHOPFY. All rights reserved.
       </Text>
     </Box>
   );

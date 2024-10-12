@@ -18,7 +18,7 @@ const createNewProduct = async (req, res) => {
       req.body;
     const category = await Category.findById(categoryId)
     if(!category) return res.status(404).json({ success: false, message: "Category not found."})
-    const brand = await Brand.findById({ brandId })
+    const brand = await Brand.findById(brandId)
     if(!brand) return res.status(404).json({ success: false, message: "No brand found."})
     const newProduct = new Product({
       name,
@@ -103,7 +103,7 @@ const rateProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find().populate('category brand','name name');
+    const products = await Product.find().populate('category','name');
     if (!products)
       return res
         .status(404)

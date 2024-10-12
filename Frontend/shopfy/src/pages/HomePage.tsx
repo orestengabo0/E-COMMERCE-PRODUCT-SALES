@@ -1,6 +1,7 @@
-import { Box, Container, Flex } from "@chakra-ui/react";
+import { Box, Container, Flex, SimpleGrid } from "@chakra-ui/react";
 import AdvertiseCard from "../components/AdvertiseCard";
 import SortSelector from "../components/SortSelector";
+import ProductCard from "../components/ProductCard";
 
 const HomePage = () => {
   return (
@@ -20,6 +21,9 @@ const HomePage = () => {
           <AdvertiseCard />
         </Box>
       </Flex>
+      <SimpleGrid columns={{ sm: 2, md: 3 }} spacing={10}>
+        <ProductCard />
+      </SimpleGrid>
     </Container>
   );
 };
