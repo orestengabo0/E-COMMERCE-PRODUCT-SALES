@@ -11,8 +11,14 @@ import {
 } from "@chakra-ui/react";
 import { AiOutlineSend } from "react-icons/ai";
 import { Link as RouterLink } from "react-router-dom";
-import { FaApple } from "react-icons/fa";
+import {
+  FaApple,
+  FaFacebookF,
+  FaInstagram,
+  FaLinkedinIn,
+} from "react-icons/fa";
 import { FaGooglePlay } from "react-icons/fa6";
+import { BsTwitterX } from "react-icons/bs";
 import { QRCodeSVG } from "qrcode.react";
 
 const Footer = () => {
@@ -91,51 +97,96 @@ const Footer = () => {
             </VStack>
           </Box>
           <Box>
-            <Text fontWeight={"semibold"} fontSize={{ base: 15, sm: 20 }}>
-              Download our App
-            </Text>
-            <VStack alignItems={"start"} spacing={2} marginTop={4}>
-              <Text color={"gray.400"} fontSize={{ base: 10, sm: 13 }}>
-                Save $3 with App New User Only.
+            <VStack>
+              <Text fontWeight={"semibold"} fontSize={{ base: 15, sm: 20 }}>
+                Download our App
               </Text>
-              <HStack>
-                <Box border={"10px solid white"}>
-                  <QRCodeSVG value="https://google.com/image.png" size={120} />
-                </Box>
-                <VStack>
-                  <Box border={"1px solid white"} padding={2} borderRadius={7}>
-                    <HStack>
-                      <FaGooglePlay size={27} />
-                      <Box>
-                        <Text fontSize={{ base: 10, sm: 10 }}>
-                          Download it on
-                        </Text>
-                        <Text
-                          fontSize={{ base: 14, sm: 12 }}
-                          fontWeight={"bold"}
-                        >
-                          Google Play
-                        </Text>
-                      </Box>
-                    </HStack>
+              <VStack alignItems={"start"} spacing={2} marginTop={4}>
+                <Text color={"gray.400"} fontSize={{ base: 10, sm: 13 }}>
+                  Save $3 with App New User Only.
+                </Text>
+                <HStack>
+                  <Box border={"10px solid white"}>
+                    <QRCodeSVG
+                      value="https://google.com/image.png"
+                      size={120}
+                    />
                   </Box>
-                  <Box border={"1px solid white"} padding={2} borderRadius={7}>
-                    <HStack>
-                      <FaApple size={30} />
-                      <Box>
-                        <Text fontSize={{ base: 10, sm: 10 }}>
-                          Download it on
-                        </Text>
-                        <Text
-                          fontSize={{ base: 14, sm: 12 }}
-                          fontWeight={"bold"}
-                        >
-                          Apple Store
-                        </Text>
-                      </Box>
-                    </HStack>
-                  </Box>
-                </VStack>
+                  <VStack>
+                    <Box
+                      border={"1px solid white"}
+                      padding={2}
+                      borderRadius={7}
+                    >
+                      <HStack>
+                        <FaGooglePlay size={27} />
+                        <Box>
+                          <Text fontSize={{ base: 10, sm: 10 }}>
+                            Download it on
+                          </Text>
+                          <Text
+                            fontSize={{ base: 14, sm: 12 }}
+                            fontWeight={"bold"}
+                          >
+                            Google Play
+                          </Text>
+                        </Box>
+                      </HStack>
+                    </Box>
+                    <Box
+                      border={"1px solid white"}
+                      padding={2}
+                      borderRadius={7}
+                    >
+                      <HStack>
+                        <FaApple size={30} />
+                        <Box>
+                          <Text fontSize={{ base: 10, sm: 10 }}>
+                            Download it on
+                          </Text>
+                          <Text
+                            fontSize={{ base: 14, sm: 12 }}
+                            fontWeight={"bold"}
+                          >
+                            Apple Store
+                          </Text>
+                        </Box>
+                      </HStack>
+                    </Box>
+                  </VStack>
+                </HStack>
+              </VStack>
+            </VStack>
+            <VStack marginTop={3}>
+              <HStack spacing={10}>
+                <Link
+                  as={RouterLink}
+                  target="blank"
+                  to={"https://www.facebook.com/muneza.chris.31"}
+                >
+                  <FaFacebookF size={20} />
+                </Link>
+                <Link
+                  as={RouterLink}
+                  target="blank"
+                  to={"https://www.facebook.com/muneza.chris.31"}
+                >
+                  <BsTwitterX size={20} />
+                </Link>
+                <Link
+                  as={RouterLink}
+                  target="blank"
+                  to={"https://www.facebook.com/muneza.chris.31"}
+                >
+                  <FaInstagram size={20} />
+                </Link>
+                <Link
+                  as={RouterLink}
+                  target="blank"
+                  to={"https://www.facebook.com/muneza.chris.31"}
+                >
+                  <FaLinkedinIn size={20} />
+                </Link>
               </HStack>
             </VStack>
           </Box>
