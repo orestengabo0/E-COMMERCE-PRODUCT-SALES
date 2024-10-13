@@ -13,13 +13,27 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import { FaPhoneAlt } from "react-icons/fa";
+import { MdOutlineEmail } from "react-icons/md";
 
 const Contacts = () => {
   return (
     <Container maxW={"container.lg"} marginTop={10} marginBottom={10}>
-      <Flex justifyContent={"space-between"} alignItems={"flex-start"} lineHeight={2}>
+      {/* Flex Direction changes based on screen size */}
+      <Flex
+        justifyContent={"space-between"}
+        alignItems={"flex-start"}
+        lineHeight={2}
+        direction={{ base: "column", md: "row" }} // Stacks vertically on smaller screens
+      >
         {/* Contact Info Section */}
-        <Box w={"300px"} height={"300px"} border={"2px solid gray.100"} shadow={"md"} padding={4}>
+        <Box
+          w={{ base: "100%", md: "300px" }} // Full width on mobile, fixed width on desktop
+          height={"300px"}
+          border={"2px solid gray.100"}
+          shadow={"md"}
+          padding={4}
+          marginBottom={{ base: 5, md: 0 }} // Adds margin-bottom on mobile
+        >
           <HStack marginBottom={2}>
             <Box
               bg={"red"}
@@ -37,7 +51,13 @@ const Contacts = () => {
           </HStack>
           <Text>We are available 24/7</Text>
           <Text>Phone: +250 738 049 975</Text>
-          <Box borderTop={"2px solid"} borderColor={"gray.300"} w={"auto"} marginTop={2} marginBottom={3} />
+          <Box
+            borderTop={"2px solid"}
+            borderColor={"gray.300"}
+            w={"auto"}
+            marginTop={2}
+            marginBottom={3}
+          />
           <HStack>
             <Box
               bg={"red"}
@@ -49,7 +69,7 @@ const Contacts = () => {
               alignItems={"center"}
               justifyContent={"center"}
             >
-              <Icon as={FaPhoneAlt} boxSize={5} />
+              <Icon as={MdOutlineEmail} boxSize={6} />
             </Box>
             <Text fontWeight={"semibold"}>Write To Us</Text>
           </HStack>
@@ -58,7 +78,7 @@ const Contacts = () => {
         </Box>
 
         {/* Form Section */}
-        <Box w={"full"} flex={1} marginLeft={5}>
+        <Box w={"full"} flex={1} marginLeft={{ base: 0, md: 5 }}>
           <VStack marginBottom={5} align={"flex-start"}>
             <Heading size={"lg"}>Want to connect with us?</Heading>
             <Text>Fill this form</Text>

@@ -109,7 +109,7 @@ const Register = () => {
           </Button>
         </VStack>
         <Flex marginTop={5} justifyContent={"center"}>
-          <Text>Already have account?</Text>
+          <Text marginRight={3}>Already have account?</Text>
           <Link as={RouterLink} to={"/login"}>
             Login
           </Link>

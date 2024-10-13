@@ -11,7 +11,10 @@ import {
   InputRightElement,
   Button,
   useToast,
+  Flex,
+  Link,
 } from "@chakra-ui/react";
+import { Link as RouterLink } from "react-router-dom";
 import { useState } from "react";
 import { useUserStore } from "../stores/user";
 import { useNavigate } from "react-router-dom";
@@ -99,6 +102,12 @@ const Login = () => {
             Login
           </Button>
         </VStack>
+        <Flex marginTop={5} justifyContent={"center"}>
+          <Text marginRight={3}>Have no account?</Text>
+          <Link as={RouterLink} to={"/register"}>
+            Register
+          </Link>
+        </Flex>
       </Box>
     </Container>
   );

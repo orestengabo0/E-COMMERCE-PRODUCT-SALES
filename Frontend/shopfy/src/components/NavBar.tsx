@@ -90,6 +90,9 @@ const NavBar = () => {
             <Link as={RouterLink} to={"/about"} fontWeight={"semibold"}>
               About
             </Link>
+            <Link as={RouterLink} to={"/login"} fontWeight={"semibold"}>
+              Login
+            </Link>
             <Link as={RouterLink} to={"/register"} fontWeight={"semibold"}>
               Signup
             </Link>
@@ -198,6 +201,14 @@ const NavBar = () => {
                       onClick={onClose}
                     >
                       About
+                    </Link>
+                    <Link
+                      as={RouterLink}
+                      to={"/login"}
+                      fontWeight={"semibold"}
+                      onClick={onClose}
+                    >
+                      Login
                     </Link>
                     <Link
                       as={RouterLink}
