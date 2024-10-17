@@ -156,13 +156,17 @@ const Contacts = () => {
             w={"full"}
           >
             <VStack>
-              <HStack w={"full"}>
+              <HStack
+                w={"full"}
+                display={"block"}
+              >
                 <Input
                   placeholder="Your name*"
                   value={userMessage.name}
                   onChange={(e) =>
                     setUserMessage({ ...userMessage, name: e.target.value })
                   }
+                  marginBottom={2}
                 />
                 <Input
                   placeholder="Your Email*"

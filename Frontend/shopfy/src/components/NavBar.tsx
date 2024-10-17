@@ -24,6 +24,7 @@ import {
   Avatar,
   MenuList,
   MenuItem,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { LuUser2 } from "react-icons/lu";
 import { Icon } from "@chakra-ui/react";
@@ -36,9 +37,9 @@ import { useEffect, useRef, useState } from "react";
 import { useUserStore } from "../stores/user";
 
 const NavBar = () => {
-  const isLoggedIn = useUserStore((state) => state.isLogggedIn)
-  const logoutUser = useUserStore((state) => state.logoutUser)
-  const navigate = useNavigate()
+  const isLoggedIn = useUserStore((state) => state.isLogggedIn);
+  const logoutUser = useUserStore((state) => state.logoutUser);
+  const navigate = useNavigate();
   const { colorMode, toggleColorMode } = useColorMode();
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -58,20 +59,26 @@ const NavBar = () => {
     };
   }, []);
   const handleLogout = () => {
-    logoutUser()
-    navigate("/login")
-  }
+    logoutUser();
+    navigate("/login");
+  };
   return (
-    <Box>
+    <Box
+      zIndex={1}
+      position={"sticky"}
+      top={{ base: 0, sm: 0, lg: 8 }}
+      bg={useColorModeValue("gray.100", "gray.800")}
+    >
       <Flex h={16} alignItems={"center"} justifyContent={"center"}>
         <Box marginRight={10}>
           <Text
-            fontSize={{ base: "22", sm: "28" }}
+            fontSize={{ base: 26, md: 30 }}
             fontWeight={"bold"}
             textTransform={"uppercase"}
             textAlign={"center"}
             bgGradient={"linear(to-r, cyan.400, blue.500)"}
             bgClip={"text"}
+            marginLeft={2}
           >
             <Link as={RouterLink} to={"/"}>
               🛒Shopfy
@@ -120,6 +127,14 @@ const NavBar = () => {
               />
             </InputGroup>
           </Box>
+          <IconButton
+            aria-label="Search"
+            colorScheme="teal"
+            variant={"ghost"}
+            size={"lg"}
+            icon={<CiSearch size={30} />}
+            display={{base: "flex", md: "none"}}
+          />
         </HStack>
         <HStack spacing={3} marginLeft={5}>
           <IconButton
@@ -128,6 +143,7 @@ const NavBar = () => {
             colorScheme="teal"
             variant="ghost"
             size="lg"
+            display={{base: "none", md: "flex"}}
           />
           <IconButton
             aria-label="Cart"
@@ -135,6 +151,7 @@ const NavBar = () => {
             colorScheme="teal"
             variant="ghost"
             size="lg"
+            display={{base: "none", md: "flex"}}
           />
           <Button onClick={toggleColorMode}>
             {colorMode === "light" ? <IoMdMoon color="teal" /> : <FaRegSun />}
@@ -149,7 +166,9 @@ const NavBar = () => {
                   variant={"outline"}
                 />
                 <MenuList>
-                  <MenuItem onClick={() => navigate("/profile")}>View Profile</MenuItem>
+                  <MenuItem onClick={() => navigate("/profile")}>
+                    View Profile
+                  </MenuItem>
                   <MenuItem>My Orders</MenuItem>
                   <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </MenuList>
@@ -217,6 +236,22 @@ const NavBar = () => {
                       onClick={onClose}
                     >
                       Signup
+                    </Link>
+                    <Link
+                      as={RouterLink}
+                      to={"/wishlist"}
+                      fontWeight={"semibold"}
+                      onClick={onClose}
+                    >
+                      Wishlist
+                    </Link>
+                    <Link
+                      as={RouterLink}
+                      to={"/cart"}
+                      fontWeight={"semibold"}
+                      onClick={onClose}
+                    >
+                      Cart
                     </Link>
                   </HStack>
                 </DrawerBody>
