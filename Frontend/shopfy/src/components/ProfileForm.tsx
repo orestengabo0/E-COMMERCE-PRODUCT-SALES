@@ -18,6 +18,7 @@ import { useUserStore } from "../stores/user";
 const ProfileForm = () => {
   const toast = useToast();
   const { updateUser, getCurrentUser, currentUser } = useUserStore();
+  const [isLoading, setIsLoading] = useState(false);
   const [userData, setUserData] = useState({
     username: "",
     email: "",
@@ -59,33 +60,65 @@ const ProfileForm = () => {
     }
   }, [currentUser]);
 
-  const handleUserUpdate = async () => {
-    const { success, message } = await updateUser(userData);
-    if (!success) {
+
+const handleUserUpdate = async () => {
+  setIsLoading(true);
+  
+  if (userData.newPassword || userData.confirmPassword) {
+    if (userData.newPassword !== userData.confirmPassword) {
+      setIsLoading(false);
       toast({
         title: "Error",
-        description: message,
+        description: "New password and confirm password do not match.",
         status: "error",
         duration: 3000,
         isClosable: true,
       });
-    } else {
+      return;
+    }
+
+    if (!userData.currentPassword) {
+      setIsLoading(false);
       toast({
-        title: "Success",
-        description: message,
-        status: "success",
+        title: "Error",
+        description: "Please provide your current password to update the password.",
+        status: "error",
         duration: 3000,
         isClosable: true,
       });
-      setUserData({
-        username: "",
-        email: "",
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      });
+      return;
     }
-  };
+  }
+
+  const { success, message } = await updateUser(userData);
+  setIsLoading(false);
+
+  if (!success) {
+    toast({
+      title: "Error",
+      description: message,
+      status: "error",
+      duration: 3000,
+      isClosable: true,
+    });
+  } else {
+    toast({
+      title: "Success",
+      description: message,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    setUserData({
+      username: "",
+      email: "",
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    });
+  }
+};
+
   return (
     <Box w={"full"} flex={1} marginLeft={{ base: 0, md: 5 }}>
       <Text fontSize={"xl"} mb={4} fontWeight={"semibold"}>
@@ -222,6 +255,7 @@ const ProfileForm = () => {
                   bg={"teal"}
                   variant={"solid"}
                   onClick={handleUserUpdate}
+                  isLoading={isLoading}
                 >
                   Save Changes
                 </Button>

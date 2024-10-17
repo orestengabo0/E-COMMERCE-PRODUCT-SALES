@@ -50,6 +50,7 @@ interface UserState {
     message: Message
   ) => Promise<{ success: boolean; message: string }>;
   getCurrentUser: () => Promise<void>;
+  checkToken: () => void;
 }
 
 export const useUserStore = create<UserState>((set) => ({
@@ -117,6 +118,19 @@ export const useUserStore = create<UserState>((set) => ({
     localStorage.removeItem("authToken");
     set({ isLogggedIn: false, users: [] });
   },
+  checkToken: () => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      try {
+        const decodedToken: DecodeToken = jwtDecode(token);
+        const { role } = decodedToken;
+        set({ isLogggedIn: true, role });
+      } catch (error) {
+        console.error("Invalid token", error);
+        localStorage.removeItem("authToken");
+      }
+    }
+  },
   createMessage: async (message) => {
     if (!message.name || !message.email || !message.message)
       return { success: false, message: "Please fill in all fields." };
@@ -154,19 +168,25 @@ export const useUserStore = create<UserState>((set) => ({
       };
     }
     try {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        return { success: false, message: "No token found, please login." };
+      }
+
       const res = await axios.put(
-        "http://localhost:5000/api/auth/update/me",
+        `http://localhost:5000/api/auth/update/user/me`,
         user,
         {
           headers: {
             "Content-Type": "application/json",
+            authorization: `Bearer ${token}`,
           },
         }
       );
+
+      console.log("Response:", res);
+
       if (res.data.success) {
-        const { token } = res.data
-        const decodedToken: DecodeToken = jwtDecode(token);
-        const { id } = decodedToken;
         set((state) => ({
           users: state.users.map((u) =>
             u.email === user.email ? { ...u, ...user } : u
@@ -176,7 +196,7 @@ export const useUserStore = create<UserState>((set) => ({
       }
       return { success: false, message: "Failed to update." };
     } catch (error) {
-      console.error(error)
+      console.error(error);
       return { success: false, message: "Something went wrong" };
     }
   },

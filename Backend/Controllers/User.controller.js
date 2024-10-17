@@ -210,10 +210,12 @@ const updateUserProfile = async (req, res) => {
     user.username = username;
     user.email = email;
     if (currentPassword && newPassword && confirmPassword) {
-      if (user.password !== currentPassword)
+      const isMatch = await bcrypt.compare(currentPassword, user.password);
+      if (!isMatch)
         return res
           .status(400)
-          .json({ success: false, message: "Password mismatching." });
+          .json({ success: false, message: "Incorrect current password." });
+
       if (newPassword !== confirmPassword)
         return res.status(400).json({
           success: false,

@@ -11,7 +11,6 @@ import {
   Link,
   Spacer,
   useColorMode,
-  InputRightElement,
   Kbd,
   useDisclosure,
   Drawer,
@@ -25,6 +24,12 @@ import {
   MenuList,
   MenuItem,
   useColorModeValue,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalCloseButton,
+  ModalBody,
+  InputRightElement,
 } from "@chakra-ui/react";
 import { LuUser2 } from "react-icons/lu";
 import { Icon } from "@chakra-ui/react";
@@ -33,20 +38,26 @@ import { FaBars, FaRegSun, FaShoppingCart } from "react-icons/fa";
 import { IoMdMoon } from "react-icons/io";
 import { FaRegHeart } from "react-icons/fa6";
 import { CiSearch } from "react-icons/ci";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useUserStore } from "../stores/user";
 
 const NavBar = () => {
   const isLoggedIn = useUserStore((state) => state.isLogggedIn);
   const logoutUser = useUserStore((state) => state.logoutUser);
+  const checkToken = useUserStore((state) => state.checkToken);
   const navigate = useNavigate();
   const { colorMode, toggleColorMode } = useColorMode();
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isSearchOpen,
+    onOpen: onSearchOpen,
+    onClose: onSearchClose,
+  } = useDisclosure();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.ctrlKey && event.key == "k") {
+      if (event.ctrlKey && event.key === "k") {
         event.preventDefault();
         if (searchInputRef.current) {
           searchInputRef.current.focus();
@@ -58,10 +69,16 @@ const NavBar = () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
+
+  useEffect(() => {
+    checkToken();
+  }, [checkToken]);
+
   const handleLogout = () => {
     logoutUser();
     navigate("/login");
   };
+
   return (
     <Box
       zIndex={1}
@@ -85,7 +102,7 @@ const NavBar = () => {
             </Link>
           </Text>
         </Box>
-        {/* Navigation links*/}
+        {/* Navigation links */}
         <HStack spacing={7} alignItems={"center"}>
           <HStack as={"nav"} spacing={4} display={{ base: "none", md: "flex" }}>
             <Link as={RouterLink} to={"/"} fontWeight={"semibold"}>
@@ -132,8 +149,9 @@ const NavBar = () => {
             colorScheme="teal"
             variant={"ghost"}
             size={"lg"}
-            icon={<CiSearch size={30} />}
-            display={{base: "flex", md: "none"}}
+            icon={<Icon as={CiSearch} boxSize={7} />}
+            display={{ base: "flex", md: "none" }}
+            onClick={onSearchOpen}
           />
         </HStack>
         <HStack spacing={3} marginLeft={5}>
@@ -143,7 +161,7 @@ const NavBar = () => {
             colorScheme="teal"
             variant="ghost"
             size="lg"
-            display={{base: "none", md: "flex"}}
+            display={{ base: "none", md: "flex" }}
           />
           <IconButton
             aria-label="Cart"
@@ -151,7 +169,7 @@ const NavBar = () => {
             colorScheme="teal"
             variant="ghost"
             size="lg"
-            display={{base: "none", md: "flex"}}
+            display={{ base: "none", md: "flex" }}
           />
           <Button onClick={toggleColorMode}>
             {colorMode === "light" ? <IoMdMoon color="teal" /> : <FaRegSun />}
@@ -181,7 +199,7 @@ const NavBar = () => {
               icon={<FaBars color="teal" />}
               variant="ghost"
               size="lg"
-              onClick={onOpen}
+              onClick={onOpen} // Open the drawer
             />
 
             <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
@@ -257,6 +275,27 @@ const NavBar = () => {
                 </DrawerBody>
               </DrawerContent>
             </Drawer>
+
+            <Modal isOpen={isSearchOpen} onClose={onSearchClose}>
+              <ModalContent margin={4}>
+                <ModalBody p={1}>
+                  <InputGroup>
+                    <InputLeftElement
+                      children={<Icon as={CiSearch} boxSize={8} />}
+                      height="100%"
+                    />
+                    <Input
+                      placeholder="Search product..."
+                      ref={searchInputRef}
+                      border={0}
+                      py={4}
+                      fontSize={20}
+                      height="auto"
+                    />
+                  </InputGroup>
+                </ModalBody>
+              </ModalContent>
+            </Modal>
           </Box>
         </HStack>
       </Flex>
