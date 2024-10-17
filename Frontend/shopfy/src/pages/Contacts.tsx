@@ -11,28 +11,93 @@ import {
   Button,
   Icon,
   Flex,
+  useToast,
 } from "@chakra-ui/react";
+import { useState } from "react";
 import { FaPhoneAlt } from "react-icons/fa";
 import { MdOutlineEmail } from "react-icons/md";
+import { useUserStore } from "../stores/user";
+import emailjs from "@emailjs/browser";
 
 const Contacts = () => {
+  const { createMessage } = useUserStore();
+  const [userMessage, setUserMessage] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+  const toast = useToast();
+  const handleUserMessage = async () => {
+    const serviceId = process.env.SERVICE_ID;
+    const templateId = process.env.TEMPLATE_ID;
+    const publicKey = process.env.SERVICE_ID;
+
+    if (!serviceId || !templateId || !publicKey) {
+      console.error("Missing environment variables");
+      toast({
+        title: "Error",
+        description: "Email configuration is missing.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    const templateParams = {
+      from_name: userMessage.name,
+      from_email: userMessage.email,
+      to_name: "orestengabo",
+      message: userMessage.message,
+    };
+
+    emailjs
+      .send(serviceId, templateId, templateParams, publicKey)
+      .then((response) => {
+        console.log("Email sent successfully!", response);
+      })
+      .catch((error) => {
+        console.error("Error sending email:", error);
+      });
+
+    const { success, message } = await createMessage(userMessage);
+    if (!success) {
+      toast({
+        title: "Error",
+        description: message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+    toast({
+      title: "Success",
+      description: message,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    setUserMessage({
+      name: "",
+      email: "",
+      message: "",
+    });
+  };
   return (
     <Container maxW={"container.lg"} marginTop={10} marginBottom={10}>
-      {/* Flex Direction changes based on screen size */}
       <Flex
         justifyContent={"space-between"}
         alignItems={"flex-start"}
         lineHeight={2}
-        direction={{ base: "column", md: "row" }} // Stacks vertically on smaller screens
+        direction={{ base: "column", md: "row" }}
       >
-        {/* Contact Info Section */}
         <Box
-          w={{ base: "100%", md: "300px" }} // Full width on mobile, fixed width on desktop
+          w={{ base: "100%", md: "300px" }}
           height={"300px"}
           border={"2px solid gray.100"}
           shadow={"md"}
           padding={4}
-          marginBottom={{ base: 5, md: 0 }} // Adds margin-bottom on mobile
+          marginBottom={{ base: 5, md: 0 }}
         >
           <HStack marginBottom={2}>
             <Box
@@ -92,11 +157,29 @@ const Contacts = () => {
           >
             <VStack>
               <HStack w={"full"}>
-                <Input placeholder="Your name*" />
-                <Input placeholder="Your Email*" />
+                <Input
+                  placeholder="Your name*"
+                  value={userMessage.name}
+                  onChange={(e) =>
+                    setUserMessage({ ...userMessage, name: e.target.value })
+                  }
+                />
+                <Input
+                  placeholder="Your Email*"
+                  value={userMessage.email}
+                  onChange={(e) =>
+                    setUserMessage({ ...userMessage, email: e.target.value })
+                  }
+                />
               </HStack>
-              <Textarea placeholder="Your message here*" />
-              <Button bg={"teal"} w={"full"}>
+              <Textarea
+                placeholder="Your message here*"
+                value={userMessage.message}
+                onChange={(e) =>
+                  setUserMessage({ ...userMessage, message: e.target.value })
+                }
+              />
+              <Button bg={"teal"} w={"full"} onClick={handleUserMessage}>
                 Send Message
               </Button>
             </VStack>

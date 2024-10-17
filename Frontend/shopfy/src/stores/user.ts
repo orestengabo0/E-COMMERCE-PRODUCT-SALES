@@ -13,6 +13,14 @@ interface UserLogin {
   password: string;
 }
 
+interface UpdateUser {
+  username: string;
+  email: string;
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
 interface DecodeToken {
   id: string;
   role: string;
@@ -25,6 +33,7 @@ interface Message {
 }
 
 interface UserState {
+  currentUser: User | null;
   users: User[];
   messages: Message[];
   isLogggedIn: boolean;
@@ -34,12 +43,17 @@ interface UserState {
     user: UserLogin
   ) => Promise<{ success: boolean; message: string; role?: string }>;
   logoutUser: () => void;
+  updateUser: (
+    user: UpdateUser
+  ) => Promise<{ success: boolean; message: string }>;
   createMessage: (
     message: Message
   ) => Promise<{ success: boolean; message: string }>;
+  getCurrentUser: () => Promise<void>;
 }
 
 export const useUserStore = create<UserState>((set) => ({
+  currentUser: null,
   users: [],
   messages: [],
   isLogggedIn: false,
@@ -123,6 +137,68 @@ export const useUserStore = create<UserState>((set) => ({
       return { success: false, message: "Failed to send Message." };
     } catch (error) {
       return { success: false, message: "Something went wrong." };
+    }
+  },
+  updateUser: async (user) => {
+    if (!user.username || !user.email) {
+      return { success: false, message: "Please fill in all required fields." };
+    }
+    if (
+      user.newPassword &&
+      user.confirmPassword &&
+      user.newPassword !== user.confirmPassword
+    ) {
+      return {
+        success: false,
+        message: "Confirmed password doesn't match the new password.",
+      };
+    }
+    try {
+      const res = await axios.put(
+        "http://localhost:5000/api/auth/update/me",
+        user,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (res.data.success) {
+        const { token } = res.data
+        const decodedToken: DecodeToken = jwtDecode(token);
+        const { id } = decodedToken;
+        set((state) => ({
+          users: state.users.map((u) =>
+            u.email === user.email ? { ...u, ...user } : u
+          ),
+        }));
+        return { success: true, message: "User profile updated successfully." };
+      }
+      return { success: false, message: "Failed to update." };
+    } catch (error) {
+      console.error(error)
+      return { success: false, message: "Something went wrong" };
+    }
+  },
+  getCurrentUser: async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        set({ currentUser: null, isLogggedIn: false });
+        return;
+      }
+      const res = await axios.get("http://localhost:5000/api/auth/user/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (res.data.success) {
+        set({ currentUser: res.data.user });
+      } else {
+        set({ currentUser: null });
+      }
+    } catch (error) {
+      set({ currentUser: null });
     }
   },
 }));

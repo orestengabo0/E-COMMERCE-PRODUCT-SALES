@@ -9,7 +9,7 @@ import ProductCardSkeleton from "../components/ProductCardSkeleton";
 const HomePage = () => {
   const { products, fetchProducts, isLoading, error } = useProductStore();
   const [likedProducts, setLikedProducts] = useState<Set<string>>(new Set());
-  const skeletons = [1,2,3,4];
+  const skeletons = [1,2,3,4,5,6];
 
   useEffect(() => {
     fetchProducts();

@@ -5,6 +5,7 @@ const { hashPassword } = require("../Security/hashPasswords");
 const {
   validateLogin,
   validateRegistration,
+  validateUpdateProfile,
 } = require("../Validation/validationUser");
 
 const createUser = async (req, res) => {
@@ -169,22 +170,66 @@ const getUserById = async (req, res) => {
       return res
         .status(400)
         .json({ success: false, message: "No user found." });
-    res.status(200).json({success: true, data: user})
+    res.status(200).json({ success: true, data: user });
   } catch (error) {
-    console.error("Error getting users ", error)
-    res.status(500).json({success: false, message: "Server error."})
+    console.error("Error getting users ", error);
+    res.status(500).json({ success: false, message: "Server error." });
   }
-}
+};
 
-const getAllUsers = async(req, res) => {
+const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find()
-    if(!users) return res.status(400).json({success: false, message: "No user found."})
-    res.status(200).json({success: true, data: users ,message: "Users found."})
+    const users = await User.find();
+    if (!users)
+      return res
+        .status(400)
+        .json({ success: false, message: "No user found." });
+    res
+      .status(200)
+      .json({ success: true, data: users, message: "Users found." });
   } catch (error) {
-    res.json({success: false, message: "Server error."})
+    res.json({ success: false, message: "Server error." });
   }
-}
+};
+
+const updateUserProfile = async (req, res) => {
+  const { error } = validateUpdateProfile(req.body);
+  if (error)
+    return res
+      .status(400)
+      .json({ success: false, message: error.details[0].message });
+  try {
+    const { username, email, currentPassword, newPassword, confirmPassword } =
+      req.body;
+    const userId = req.user.id;
+    const user = await User.findOne({ _id: userId });
+    if (!user)
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found." });
+    user.username = username;
+    user.email = email;
+    if (currentPassword && newPassword && confirmPassword) {
+      if (user.password !== currentPassword)
+        return res
+          .status(400)
+          .json({ success: false, message: "Password mismatching." });
+      if (newPassword !== confirmPassword)
+        return res.status(400).json({
+          success: false,
+          message: "Confirmed password doesn't match the new password.",
+        });
+
+      const hashedPassword = await hashPassword(newPassword);
+      user.password = hashedPassword;
+    }
+    await user.save();
+    res.status(200).json({ success: true, message: "User profile updated." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Server error." });
+  }
+};
 
 module.exports = {
   createUser,
@@ -193,5 +238,6 @@ module.exports = {
   revokeAdminPermission,
   getCurrentUser,
   getUserById,
-  getAllUsers
+  getAllUsers,
+  updateUserProfile,
 };

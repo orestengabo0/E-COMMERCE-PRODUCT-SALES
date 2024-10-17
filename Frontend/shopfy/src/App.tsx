@@ -7,10 +7,11 @@ import Register from "./pages/Register";
 import { Box, useColorModeValue } from "@chakra-ui/react";
 import Login from "./pages/Login";
 import Contacts from "./pages/Contacts";
+import Profile from "./pages/Profile";
 
 const App = () => {
   return (
-    <Box minH={"100vh"} bg={useColorModeValue("gray.100","gray.800")}>
+    <Box minH={"100vh"} bg={useColorModeValue("gray.100", "gray.800")}>
       <Router>
         <NavBarTop />
         <NavBar />
@@ -20,6 +21,7 @@ const App = () => {
           <Route path="/login" element={<Login />}></Route>
           <Route path="/admin"></Route>
           <Route path="/contacts" element={<Contacts />}></Route>
+          <Route path="/profile/*" element={<Profile />}></Route>
         </Routes>
         <Footer />
       </Router>
