@@ -197,7 +197,7 @@ export const useUserStore = create<UserState>((set) => ({
       return { success: false, message: "Failed to update." };
     } catch (error) {
       console.error(error);
-      return { success: false, message: "Something went wrong" };
+      return { success: false, message: "Incorrect username or password." };
     }
   },
   getCurrentUser: async () => {

@@ -5,7 +5,7 @@ import ProfileForm from "../components/ProfileForm";
 
 const Profile = () => {
   return (
-    <Container maxW={"container.lg"}>
+    <Container maxW={"container.lg"} marginTop={10} marginBottom={12}>
       <Flex
         justifyContent={"space-between"}
         alignItems={"flex-start"}

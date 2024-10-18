@@ -3,12 +3,23 @@ import {
   Box,
   Button,
   Flex,
+  FormControl,
+  FormLabel,
+  Heading,
   HStack,
   Input,
   InputGroup,
   InputRightElement,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Text,
   useColorModeValue,
+  useDisclosure,
   useToast,
   VStack,
 } from "@chakra-ui/react";
@@ -19,6 +30,7 @@ const ProfileForm = () => {
   const toast = useToast();
   const { updateUser, getCurrentUser, currentUser } = useUserStore();
   const [isLoading, setIsLoading] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [userData, setUserData] = useState({
     username: "",
     email: "",
@@ -60,103 +72,103 @@ const ProfileForm = () => {
     }
   }, [currentUser]);
 
+  const handleUserUpdate = async () => {
+    setIsLoading(true);
 
-const handleUserUpdate = async () => {
-  setIsLoading(true);
-  
-  if (userData.newPassword || userData.confirmPassword) {
-    if (userData.newPassword !== userData.confirmPassword) {
-      setIsLoading(false);
+    if (userData.newPassword || userData.confirmPassword) {
+      if (userData.newPassword !== userData.confirmPassword) {
+        setIsLoading(false);
+        toast({
+          title: "Error",
+          description: "New password and confirm password do not match.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        return;
+      }
+
+      if (!userData.currentPassword) {
+        setIsLoading(false);
+        toast({
+          title: "Error",
+          description:
+            "Please provide your current password to update the password.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        return;
+      }
+    }
+
+    const { success, message } = await updateUser(userData);
+    setIsLoading(false);
+
+    if (!success) {
       toast({
         title: "Error",
-        description: "New password and confirm password do not match.",
+        description: message,
         status: "error",
         duration: 3000,
         isClosable: true,
       });
-      return;
-    }
-
-    if (!userData.currentPassword) {
-      setIsLoading(false);
+    } else {
       toast({
-        title: "Error",
-        description: "Please provide your current password to update the password.",
-        status: "error",
+        title: "Success",
+        description: message,
+        status: "success",
         duration: 3000,
         isClosable: true,
       });
-      return;
+      setUserData({
+        username: "",
+        email: "",
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
     }
-  }
-
-  const { success, message } = await updateUser(userData);
-  setIsLoading(false);
-
-  if (!success) {
-    toast({
-      title: "Error",
-      description: message,
-      status: "error",
-      duration: 3000,
-      isClosable: true,
-    });
-  } else {
-    toast({
-      title: "Success",
-      description: message,
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    });
-    setUserData({
-      username: "",
-      email: "",
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    });
-  }
-};
+  };
 
   return (
     <Box w={"full"} flex={1} marginLeft={{ base: 0, md: 5 }}>
-      <Text fontSize={"xl"} mb={4} fontWeight={"semibold"}>
-        Edit your profile
-      </Text>
-      <Box
-        shadow={"md"}
-        padding={6}
-        rounded={"lg"}
-        bg={useColorModeValue("white", "gray.700")}
-        w={"full"}
-      >
-        <VStack spacing={4} w={"full"}>
-          <HStack w={"full"} spacing={4}>
-            <Box w={"full"}>
-              <label>Names</label>
+      <VStack align="stretch">
+        <Heading>User Profile</Heading>
+        <Text fontSize={"lg"}>
+          <strong>Username:</strong> {userData.username}
+        </Text>
+        <Text fontSize={"lg"}>
+          <strong>Email:</strong> {userData.email}
+        </Text>
+        <Text fontSize={"lg"}>
+          <strong>Password:</strong> {"*****************"}
+        </Text>
+        <Button onClick={onOpen} colorScheme="teal">
+          Edit Profile
+        </Button>
+      </VStack>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Edit Profile</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <VStack spacing={4}>
               <Input
-                placeholder="Your name*"
+                name="username"
                 value={userData.username}
                 onChange={(e) =>
                   setUserData({ ...userData, username: e.target.value })
                 }
               />
-            </Box>
-            <Box w={"full"}>
-              <label>Your email</label>
               <Input
-                placeholder="Your Email*"
+                name="email"
                 value={userData.email}
                 onChange={(e) =>
-                  setUserData({ ...userData, email: e.target.value })
+                  setUserData({ ...userData, username: e.target.value })
                 }
               />
-            </Box>
-          </HStack>
-          <Box w={"full"}>
-            <label>Password changes</label>
-            <VStack w={"full"} spacing={4}>
               <InputGroup>
                 <Input
                   type={viewPassword.currentPassword ? "text" : "password"}
@@ -247,23 +259,18 @@ const handleUserUpdate = async () => {
                   }
                 />
               </InputGroup>
-              <Flex justify={"flex-end"} w={"full"}>
-                <Button colorScheme="red" variant={"ghost"} mr={3}>
-                  Cancel
-                </Button>
-                <Button
-                  bg={"teal"}
-                  variant={"solid"}
-                  onClick={handleUserUpdate}
-                  isLoading={isLoading}
-                >
-                  Save Changes
-                </Button>
-              </Flex>
             </VStack>
-          </Box>
-        </VStack>
-      </Box>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={handleUserUpdate}>
+              Save Changes
+            </Button>
+            <Button variant="ghost" onClick={onClose}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };

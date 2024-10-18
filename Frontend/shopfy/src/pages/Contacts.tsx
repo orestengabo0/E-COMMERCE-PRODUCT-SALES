@@ -28,9 +28,11 @@ const Contacts = () => {
   });
   const toast = useToast();
   const handleUserMessage = async () => {
-    const serviceId = process.env.SERVICE_ID;
-    const templateId = process.env.TEMPLATE_ID;
-    const publicKey = process.env.SERVICE_ID;
+    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+    console.log(serviceId, templateId, publicKey);
 
     if (!serviceId || !templateId || !publicKey) {
       console.error("Missing environment variables");
@@ -84,7 +86,7 @@ const Contacts = () => {
     });
   };
   return (
-    <Container maxW={"container.lg"} marginTop={10} marginBottom={10}>
+    <Container maxW={"container.lg"} marginTop={10} marginBottom={12}>
       <Flex
         justifyContent={"space-between"}
         alignItems={"flex-start"}
@@ -156,10 +158,7 @@ const Contacts = () => {
             w={"full"}
           >
             <VStack>
-              <HStack
-                w={"full"}
-                display={"block"}
-              >
+              <HStack w={"full"} display={"block"}>
                 <Input
                   placeholder="Your name*"
                   value={userMessage.name}
@@ -183,7 +182,11 @@ const Contacts = () => {
                   setUserMessage({ ...userMessage, message: e.target.value })
                 }
               />
-              <Button bg={"teal"} w={"full"} onClick={handleUserMessage}>
+              <Button
+                colorScheme={"teal"}
+                w={"full"}
+                onClick={handleUserMessage}
+              >
                 Send Message
               </Button>
             </VStack>
