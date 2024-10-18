@@ -1,8 +1,7 @@
 const Joi = require("joi");
 const validateUserAddress = (address) => {
   const schema = Joi.object({
-    name: Joi.string().required(),
-    street: Joi.string().required(),
+    Street: Joi.string().required(),
     City: Joi.string().required(),
     ZipCode: Joi.string().required(),
     Country: Joi.string().required(),
@@ -13,7 +12,7 @@ const validateUserAddress = (address) => {
 const validateUpdateUserAddress = (address) => {
   const schema = Joi.object({
     name: Joi.string().optional(),
-    street: Joi.string().optional(),
+    Street: Joi.string().optional(),
     City: Joi.string().optional(),
     ZipCode: Joi.string().optional(),
     Country: Joi.string().optional(),

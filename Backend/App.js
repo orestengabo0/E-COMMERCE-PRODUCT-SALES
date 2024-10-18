@@ -11,6 +11,7 @@ const categoryRoute = require("./Routes/category.router.js");
 const brandRoute = require("./Routes/brand.router.js");
 const searchRoute = require("./Routes/search.router.js");
 const messageRoute = require("./Routes/message.router.js");
+const addressRoute = require("./Routes/address.router.js");
 
 dotenv.config({ path: path.join(__dirname, "../.env") });
 
@@ -28,6 +29,7 @@ app.use("/api/orders", orderRoute)
 app.use("/api/cart", cartRoute)
 app.use("/api/search", searchRoute)
 app.use("/api/messages", messageRoute)
+app.use("/api/addresses", addressRoute)
 
 connectDB().then(() => {
   app.listen(PORT, () => {

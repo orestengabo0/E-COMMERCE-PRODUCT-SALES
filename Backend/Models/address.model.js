@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const addressSchema = new mongoose.Schema(
   {
-    name: {
+    user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
@@ -21,7 +21,7 @@ const addressSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    country: {
+    Country: {
       type: String,
       required: true,
       trim: true,
