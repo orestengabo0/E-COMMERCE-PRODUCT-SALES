@@ -75,4 +75,24 @@ const updateAddress = async (req, res) => {
   }
 };
 
-module.exports = { createAddress, getAddresses, updateAddress };
+const deleteAddress = async (req, res) => {
+  try {
+    const { addressId } = req.params;
+    const address = await Address.findOneAndUpdate(
+      { user: req.user.id },
+      { $pull: { addresses: { _id: addressId } } },
+      { new: true }
+    );
+    if (!address)
+      return res
+        .status(404)
+        .json({ success: false, message: "No address found." });
+    res
+      .status(200)
+      .json({ success: true, message: "Address deleted.", address });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Server error." });
+  }
+};
+
+module.exports = { createAddress, getAddresses, updateAddress, deleteAddress };
