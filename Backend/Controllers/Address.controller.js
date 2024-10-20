@@ -18,16 +18,34 @@ const createAddress = async (req, res) => {
       return res
         .status(404)
         .json({ success: false, message: "User not found." });
-    const { Street, City, ZipCode, Country } = req.body;
+    const { Street, City, ZipCode, Country, isDefault } = req.body;
     let addressDoc = await Address.findOne({ user: req.user.id });
     if (!addressDoc)
       addressDoc = new Address({ user: user._id, addresses: [] });
+
+    const existingAddress = addressDoc.addresses.find(
+      (addr) =>
+        addr.Street === Street &&
+        addr.City === City &&
+        addr.ZipCode === ZipCode &&
+        addr.Country === Country
+    );
+    if (existingAddress) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Address already exists." });
+    }
+
+    if (isDefault) {
+      addressDoc.addresses.forEach((addr) => (addr.isDefault = false));
+    }
 
     addressDoc.addresses.push({
       Street,
       City,
       ZipCode,
       Country,
+      isDefault: isDefault || addressDoc.addresses.length === 0,
     });
     await addressDoc.save();
     res.status(201).json({ success: true, message: "Address saved." });
@@ -56,19 +74,42 @@ const updateAddress = async (req, res) => {
     return res
       .status(400)
       .json({ success: false, message: error.details[0].message });
+
   try {
+    const { addressId } = req.params;
     const userId = req.user.id;
-    const address = await Address.findOneAndUpdate({ user: userId }, req.body, {
-      new: true,
-    });
-    if (!address)
+
+    const addressDoc = await Address.findOne({ user: userId });
+    if (!addressDoc)
       return res
         .status(404)
         .json({ success: false, message: "No address found." });
-    await address.save();
-    res
-      .status(200)
-      .json({ success: true, message: "User address updated.", address });
+
+    const addressIndex = addressDoc.addresses.findIndex(
+      (addr) => addr._id.toString() === addressId
+    );
+    if (addressIndex === -1)
+      return res
+        .status(404)
+        .json({ success: false, message: "Address not found." });
+
+    addressDoc.addresses[addressIndex] = {
+      ...addressDoc.addresses[addressIndex],
+      ...req.body,
+    };
+
+    if (req.body.isDefault) {
+      addressDoc.addresses.forEach((addr, i) => {
+        if (i !== addressIndex) addr.isDefault = false;
+      });
+    }
+
+    await addressDoc.save();
+    res.status(200).json({
+      success: true,
+      message: "User address updated.",
+      address: addressDoc,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Server error." });
@@ -78,18 +119,31 @@ const updateAddress = async (req, res) => {
 const deleteAddress = async (req, res) => {
   try {
     const { addressId } = req.params;
-    const address = await Address.findOneAndUpdate(
+    const addressDoc = await Address.findOneAndUpdate(
       { user: req.user.id },
       { $pull: { addresses: { _id: addressId } } },
       { new: true }
     );
-    if (!address)
+    if (!addressDoc)
       return res
         .status(404)
         .json({ success: false, message: "No address found." });
+
+    if (
+      addressDoc.addresses.length > 0 &&
+      !addressDoc.addresses.some((addr) => addr.isDefault)
+    ) {
+      addressDoc.addresses[0].isDefault = true;
+      await addressDoc.save();
+    }
+
     res
       .status(200)
-      .json({ success: true, message: "Address deleted.", address });
+      .json({
+        success: true,
+        message: "Address deleted.",
+        address: addressDoc,
+      });
   } catch (error) {
     return res.status(500).json({ success: false, message: "Server error." });
   }
