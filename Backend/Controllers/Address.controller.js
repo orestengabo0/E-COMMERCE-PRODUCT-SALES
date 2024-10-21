@@ -119,6 +119,7 @@ const updateAddress = async (req, res) => {
 const deleteAddress = async (req, res) => {
   try {
     const { addressId } = req.params;
+    console.log("Deleting address with id: ", addressId);
     const addressDoc = await Address.findOneAndUpdate(
       { user: req.user.id },
       { $pull: { addresses: { _id: addressId } } },
@@ -137,14 +138,13 @@ const deleteAddress = async (req, res) => {
       await addressDoc.save();
     }
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Address deleted.",
-        address: addressDoc,
-      });
+    res.status(200).json({
+      success: true,
+      message: "Address deleted.",
+      address: addressDoc,
+    });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({ success: false, message: "Server error." });
   }
 };

@@ -47,7 +47,8 @@ const AddressBook = () => {
     Country: "",
     isDefault: false,
   });
-  const { addresses, fetchAddresses, createAddress } = useAddressStore();
+  const { addresses, fetchAddresses, createAddress, deleteAddress } =
+    useAddressStore();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const {
@@ -105,6 +106,27 @@ const AddressBook = () => {
     // });
   };
 
+  const handleDeleteAddress = async (addressId: string) => {
+    const { success, message } = await deleteAddress(addressId);
+    if (!success) {
+      toast({
+        title: "Error",
+        description: message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: message,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
   return (
     <Box w={"full"} flex={1} marginLeft={{ base: 0, md: 5 }}>
       <VStack spacing={8} align="stretch">
@@ -144,7 +166,7 @@ const AddressBook = () => {
                 </Thead>
                 <Tbody>
                   {addresses.map((address) => (
-                    <Tr key={address.id}>
+                    <Tr key={address._id}>
                       <Td>{address.Street}</Td>
                       <Td>{address.City}</Td>
                       <Td>{address.ZipCode}</Td>
@@ -162,6 +184,10 @@ const AddressBook = () => {
                           aria-label="Delete address"
                           icon={<DeleteIcon />}
                           colorScheme="red"
+                          onClick={() => {
+                            console.log("Deleting address with ID:", address._id); 
+                            handleDeleteAddress(address._id)
+                          }}
                         />
                       </Td>
                     </Tr>
