@@ -14,13 +14,24 @@ import {
   Tr,
   VStack,
   Text,
+  FormControl,
+  FormLabel,
+  Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useAddressStore } from "../stores/address";
 
 interface Address {
   id: string;
-  Name: string;
   Street: string;
   City: string;
   ZipCode: string;
@@ -29,9 +40,25 @@ interface Address {
 }
 
 const AddressBook = () => {
-  const { addresses, fetchAddresses } = useAddressStore();
+  const [newAddress, setNewAddress] = useState({
+    Street: "",
+    City: "",
+    ZipCode: "",
+    Country: "",
+    isDefault: false,
+  });
+  const { addresses, fetchAddresses, createAddress } = useAddressStore();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const {
+    isOpen: isAddressOpen,
+    onOpen: onAddressOpen,
+    onClose: onAddressClose,
+  } = useDisclosure();
+
+  const openAddressModal = (address: Address | null) => {
+    onAddressOpen();
+  };
 
   useEffect(() => {
     const loadAddresses = async () => {
@@ -49,6 +76,35 @@ const AddressBook = () => {
     loadAddresses();
   }, [fetchAddresses]);
 
+  const toast = useToast();
+  const handleCreateAddress = async () => {
+    const { success, message } = await createAddress(newAddress);
+    if (!success) {
+      toast({
+        title: "Error",
+        description: message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: message,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+    // setNewAddress({
+    //   Street: "",
+    //   City: "",
+    //   Country: "",
+    //   ZipCode: "",
+    //   isDefault: false,
+    // });
+  };
+
   return (
     <Box w={"full"} flex={1} marginLeft={{ base: 0, md: 5 }}>
       <VStack spacing={8} align="stretch">
@@ -57,7 +113,12 @@ const AddressBook = () => {
             Address Book
           </Heading>
 
-          <Button leftIcon={<AddIcon />} colorScheme="teal" mb={4}>
+          <Button
+            leftIcon={<AddIcon />}
+            colorScheme="teal"
+            mb={4}
+            onClick={() => openAddressModal(null)}
+          >
             Add New Address
           </Button>
 
@@ -68,11 +129,11 @@ const AddressBook = () => {
           ) : addresses.length === 0 ? (
             <Text>No addresses found. Please add a new address.</Text>
           ) : (
-            Array.isArray(addresses) && addresses.length > 0 && (
+            Array.isArray(addresses) &&
+            addresses.length > 0 && (
               <Table variant={"simple"}>
                 <Thead>
                   <Tr>
-                    <Th>Name</Th>
                     <Th>Street</Th>
                     <Th>City</Th>
                     <Th>Zip Code</Th>
@@ -84,7 +145,6 @@ const AddressBook = () => {
                 <Tbody>
                   {addresses.map((address) => (
                     <Tr key={address.id}>
-                      <Td>{address.Name}</Td>
                       <Td>{address.Street}</Td>
                       <Td>{address.City}</Td>
                       <Td>{address.ZipCode}</Td>
@@ -92,9 +152,17 @@ const AddressBook = () => {
                       <Td>
                         <Checkbox isChecked={address.isDefault}></Checkbox>
                       </Td>
-                      <Td>
-                        <IconButton aria-label={"Edit address"} icon={<EditIcon />} mr={2} />
-                        <IconButton aria-label="Delete address" icon={<DeleteIcon />} colorScheme="red" />
+                      <Td display={"flex"}>
+                        <IconButton
+                          aria-label={"Edit address"}
+                          icon={<EditIcon />}
+                          mr={2}
+                        />
+                        <IconButton
+                          aria-label="Delete address"
+                          icon={<DeleteIcon />}
+                          colorScheme="red"
+                        />
                       </Td>
                     </Tr>
                   ))}
@@ -102,6 +170,72 @@ const AddressBook = () => {
               </Table>
             )
           )}
+
+          <Modal isOpen={isAddressOpen} onClose={onAddressClose}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Create your address</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <VStack spacing={4}>
+                  <Input
+                    name="street"
+                    placeholder="Street"
+                    value={newAddress.Street}
+                    onChange={(e) =>
+                      setNewAddress({ ...newAddress, Street: e.target.value })
+                    }
+                  />
+                  <Input
+                    name="city"
+                    placeholder="City"
+                    value={newAddress.City}
+                    onChange={(e) =>
+                      setNewAddress({ ...newAddress, City: e.target.value })
+                    }
+                  />
+                  <Input
+                    name="zipCode"
+                    placeholder="ZipCode"
+                    value={newAddress.ZipCode}
+                    onChange={(e) =>
+                      setNewAddress({ ...newAddress, ZipCode: e.target.value })
+                    }
+                  />
+                  <Input
+                    name="country"
+                    placeholder="Country"
+                    value={newAddress.Country}
+                    onChange={(e) =>
+                      setNewAddress({ ...newAddress, Country: e.target.value })
+                    }
+                  />
+                  <FormControl>
+                    <Checkbox
+                      name="isDefault"
+                      isChecked={newAddress.isDefault}
+                      onChange={(e) =>
+                        setNewAddress({
+                          ...newAddress,
+                          isDefault: e.target.checked,
+                        })
+                      }
+                    >
+                      Set as default address
+                    </Checkbox>
+                  </FormControl>
+                </VStack>
+              </ModalBody>
+              <ModalFooter>
+                <Button colorScheme="blue" mr={3} onClick={handleCreateAddress}>
+                  Create
+                </Button>
+                <Button variant="ghost" onClick={onAddressClose}>
+                  Cancel
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
         </Box>
       </VStack>
     </Box>
