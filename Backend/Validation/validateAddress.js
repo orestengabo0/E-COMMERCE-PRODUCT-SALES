@@ -12,6 +12,7 @@ const validateUserAddress = (address) => {
 
 const validateUpdateUserAddress = (address) => {
   const schema = Joi.object({
+    _id: Joi.string().optional(),
     Street: Joi.string().optional(),
     City: Joi.string().optional(),
     ZipCode: Joi.string().optional(),

@@ -12,7 +12,7 @@ const addressRoute = express.Router();
 
 addressRoute.post("/create", authenticate, createAddress);
 addressRoute.get("/", authenticate, getAddresses);
-addressRoute.put("/update", authenticate, updateAddress);
+addressRoute.put("/update/:addressId", authenticate, updateAddress);
 addressRoute.delete("/delete/:addressId", authenticate, deleteAddress);
 
 module.exports = addressRoute;

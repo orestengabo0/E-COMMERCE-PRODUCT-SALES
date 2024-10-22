@@ -29,9 +29,10 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useAddressStore } from "../stores/address";
+import { create } from "domain";
 
 interface Address {
-  id: string;
+  _id: string;
   Street: string;
   City: string;
   ZipCode: string;
@@ -41,16 +42,18 @@ interface Address {
 
 const AddressBook = () => {
   const [newAddress, setNewAddress] = useState({
+    _id: "",
     Street: "",
     City: "",
     ZipCode: "",
     Country: "",
     isDefault: false,
   });
-  const { addresses, fetchAddresses, createAddress, deleteAddress } =
+  const { addresses, fetchAddresses, createAddress, deleteAddress, updateAddress } =
     useAddressStore();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
   const {
     isOpen: isAddressOpen,
     onOpen: onAddressOpen,
@@ -58,6 +61,20 @@ const AddressBook = () => {
   } = useDisclosure();
 
   const openAddressModal = (address: Address | null) => {
+    if (address) {
+      setIsEditMode(true);
+      setNewAddress(address);
+    } else {
+      setIsEditMode(false);
+      setNewAddress({
+        _id: "",
+        Street: "",
+        City: "",
+        ZipCode: "",
+        Country: "",
+        isDefault: false,
+      });
+    }
     onAddressOpen();
   };
 
@@ -66,21 +83,20 @@ const AddressBook = () => {
       const result = await fetchAddresses();
       if (!result.success) {
         setError(result.message);
-      } else if (result.address && Array.isArray(result.address)) {
-        console.log("Addresses:", result.address);
-      } else {
-        console.error("Unexpected address format:", result.address);
       }
       setLoading(false);
     };
-
+  
     loadAddresses();
-  }, [fetchAddresses]);
+  }, [addresses]);
+  
 
   const toast = useToast();
-  const handleCreateAddress = async () => {
-    const { success, message } = await createAddress(newAddress);
+  const handleCreateOrUpdateAddress = async () => {
+    const action = isEditMode ? updateAddress(newAddress._id, newAddress) : createAddress(newAddress)
+    const {success, message} = await action
     if (!success) {
+      await fetchAddresses()
       toast({
         title: "Error",
         description: message,
@@ -96,15 +112,9 @@ const AddressBook = () => {
         duration: 3000,
         isClosable: true,
       });
+      onAddressClose();
     }
-    // setNewAddress({
-    //   Street: "",
-    //   City: "",
-    //   Country: "",
-    //   ZipCode: "",
-    //   isDefault: false,
-    // });
-  };
+  }
 
   const handleDeleteAddress = async (addressId: string) => {
     const { success, message } = await deleteAddress(addressId);
@@ -179,14 +189,14 @@ const AddressBook = () => {
                           aria-label={"Edit address"}
                           icon={<EditIcon />}
                           mr={2}
+                          onClick={() => openAddressModal(address)}
                         />
                         <IconButton
                           aria-label="Delete address"
                           icon={<DeleteIcon />}
                           colorScheme="red"
                           onClick={() => {
-                            console.log("Deleting address with ID:", address._id); 
-                            handleDeleteAddress(address._id)
+                            handleDeleteAddress(address._id);
                           }}
                         />
                       </Td>
@@ -200,7 +210,7 @@ const AddressBook = () => {
           <Modal isOpen={isAddressOpen} onClose={onAddressClose}>
             <ModalOverlay />
             <ModalContent>
-              <ModalHeader>Create your address</ModalHeader>
+              <ModalHeader>{isEditMode ? "Edit Address" : "Create Address"}</ModalHeader>
               <ModalCloseButton />
               <ModalBody>
                 <VStack spacing={4}>
@@ -253,8 +263,8 @@ const AddressBook = () => {
                 </VStack>
               </ModalBody>
               <ModalFooter>
-                <Button colorScheme="blue" mr={3} onClick={handleCreateAddress}>
-                  Create
+                <Button colorScheme="blue" mr={3} onClick={handleCreateOrUpdateAddress}>
+                {isEditMode ? "Update" : "Create"}
                 </Button>
                 <Button variant="ghost" onClick={onAddressClose}>
                   Cancel
