@@ -58,18 +58,15 @@ export const useAddressStore = create<AddressState>((set) => ({
     }
   },
   createAddress: async (address: Omit<Address, "_id">) => {
-    if (
-      !address.Street ||
-      !address.City ||
-      !address.Country ||
-      !address.ZipCode
-    )
+    if (!address.Street || !address.City || !address.Country || !address.ZipCode) {
       return { success: false, message: "Please fill in all inputs" };
-
+    }
+  
     try {
       const token = localStorage.getItem("authToken");
       if (!token) return { success: false, message: "User not authenticated." };
-
+  
+      // Set all other addresses to non-default if the new address is default
       if (address.isDefault) {
         set((state) => ({
           addresses: state.addresses.map((addr) =>
@@ -77,7 +74,7 @@ export const useAddressStore = create<AddressState>((set) => ({
           ),
         }));
       }
-
+  
       const res = await axios.post(
         "http://localhost:5000/api/addresses/create",
         address,
@@ -88,13 +85,16 @@ export const useAddressStore = create<AddressState>((set) => ({
           },
         }
       );
-
+  
       if (res.data.success) {
-        const createdAddress = { ...address, _id: res.data.address.id };
+        const createdAddress = { 
+          ...address, 
+          _id: res.data.address?.id || res.data.address?._id || '' // Fallback if id is undefined
+        };
         set((state) => ({ addresses: [...state.addresses, createdAddress] }));
         return { success: true, message: "Address created successfully." };
       }
-
+  
       return { success: false, message: "Address creation failed." };
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -112,12 +112,27 @@ export const useAddressStore = create<AddressState>((set) => ({
       }
     }
   },
-  updateAddress: async (addressId, updatedAddress) => {
-    const token = localStorage.getItem("authToken");
-    if (!token) return { success: false, message: "User not authenticated." };
+  
+  updateAddress: async (addressId: string, updatedAddress: Omit<Address, "_id">) => {
+    if (!updatedAddress.Street || !updatedAddress.City || !updatedAddress.Country || !updatedAddress.ZipCode) {
+      return { success: false, message: "Please fill in all inputs" };
+    }
+  
     try {
+      const token = localStorage.getItem("authToken");
+      if (!token) return { success: false, message: "User not authenticated." };
+  
+      // Set all other addresses to non-default if this address is being set as default
+      if (updatedAddress.isDefault) {
+        set((state) => ({
+          addresses: state.addresses.map((addr) =>
+            addr.isDefault && addr._id !== addressId ? { ...addr, isDefault: false } : addr
+          ),
+        }));
+      }
+  
       const res = await axios.put(
-        `http://localhost:5000/api/addresses/update/${addressId}`,
+        `http://localhost:5000/api/addresses/${addressId}`,
         updatedAddress,
         {
           headers: {
@@ -126,33 +141,34 @@ export const useAddressStore = create<AddressState>((set) => ({
           },
         }
       );
+  
       if (res.data.success) {
         set((state) => ({
-          addresses: [
-            ...state.addresses.map((address) =>
-              address._id === addressId ? res.data.address : address
-            ),
-          ],
+          addresses: state.addresses.map((addr) =>
+            addr._id === addressId ? { ...addr, ...updatedAddress } : addr
+          ),
         }));
-        return { success: true, message: "Address update successfully." };
+        return { success: true, message: "Address updated successfully." };
       }
-      return { success: false, message: "Update failed." };
+  
+      return { success: false, message: "Address update failed." };
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log("Error response:", error.response?.data || error.message);
         return {
           success: false,
-          message: error.response?.data?.message || "Failed to create Address.",
+          message: error.response?.data?.message || "Failed to update Address.",
         };
       } else if (error instanceof Error) {
         console.log("Error response:", error.message);
         return { success: false, message: "An unexpected error occurred." };
       } else {
         console.log("Unexpected error:", error);
-        return { success: false, message: "Failed to create Address." };
+        return { success: false, message: "Failed to update Address." };
       }
     }
   },
+  
   deleteAddress: async (addressId) => {
     const token = localStorage.getItem("authToken");
     if (!token) return { success: false, message: "User not authenticated." };

@@ -79,32 +79,23 @@ const AddressBook = () => {
   };
 
   useEffect(() => {
-    const loadAddresses = async () => {
-      const result = await fetchAddresses();
-      if (!result.success) {
-        setError(result.message);
-      }
-      setLoading(false);
-    };
-  
-    loadAddresses();
-  }, [addresses]);
-  
+  const loadAddresses = async () => {
+    const result = await fetchAddresses();
+    if (!result.success) {
+      setError(result.message);
+    }
+    setLoading(false);
+  };
+
+  loadAddresses();
+}, [addresses]);
+
 
   const toast = useToast();
-  const handleCreateOrUpdateAddress = async () => {
-    const action = isEditMode ? updateAddress(newAddress._id, newAddress) : createAddress(newAddress)
-    const {success, message} = await action
-    if (!success) {
-      await fetchAddresses()
-      toast({
-        title: "Error",
-        description: message,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    } else {
+  const handleCreateAddress = async () => {
+    const {_id, ...addressData} = newAddress
+    const { success, message } = await createAddress(addressData);
+    if (success) {
       toast({
         title: "Success",
         description: message,
@@ -113,8 +104,41 @@ const AddressBook = () => {
         isClosable: true,
       });
       onAddressClose();
+    } else {
+      toast({
+        title: "Error",
+        description: message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
-  }
+    fetchAddresses();
+  };
+  
+  const handleUpdateAddress = async () => {
+    const { success, message } = await updateAddress(newAddress._id, newAddress);
+    if (success) {
+      toast({
+        title: "Success",
+        description: message,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      onAddressClose();
+    } else {
+      toast({
+        title: "Error",
+        description: message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+    fetchAddresses();
+  };
+  
 
   const handleDeleteAddress = async (addressId: string) => {
     const { success, message } = await deleteAddress(addressId);
@@ -263,7 +287,7 @@ const AddressBook = () => {
                 </VStack>
               </ModalBody>
               <ModalFooter>
-                <Button colorScheme="blue" mr={3} onClick={handleCreateOrUpdateAddress}>
+                <Button colorScheme="blue" mr={3} onClick={isEditMode ? handleUpdateAddress : handleCreateAddress}>
                 {isEditMode ? "Update" : "Create"}
                 </Button>
                 <Button variant="ghost" onClick={onAddressClose}>
