@@ -25,6 +25,9 @@ interface AddressState {
     updatedAddress: Omit<Address, "id">
   ) => Promise<{ success: boolean; message: string }>;
   deleteAddress: (id: string) => Promise<{ success: boolean; message: string }>;
+  setDefaultAddress: (
+    id: string
+  ) => Promise<{ success: boolean; message: string }>;
 }
 
 export const useAddressStore = create<AddressState>((set) => ({
@@ -58,14 +61,19 @@ export const useAddressStore = create<AddressState>((set) => ({
     }
   },
   createAddress: async (address: Omit<Address, "_id">) => {
-    if (!address.Street || !address.City || !address.Country || !address.ZipCode) {
+    if (
+      !address.Street ||
+      !address.City ||
+      !address.Country ||
+      !address.ZipCode
+    ) {
       return { success: false, message: "Please fill in all inputs" };
     }
-  
+
     try {
       const token = localStorage.getItem("authToken");
       if (!token) return { success: false, message: "User not authenticated." };
-  
+
       // Set all other addresses to non-default if the new address is default
       if (address.isDefault) {
         set((state) => ({
@@ -74,7 +82,7 @@ export const useAddressStore = create<AddressState>((set) => ({
           ),
         }));
       }
-  
+
       const res = await axios.post(
         "http://localhost:5000/api/addresses/create",
         address,
@@ -85,16 +93,16 @@ export const useAddressStore = create<AddressState>((set) => ({
           },
         }
       );
-  
+
       if (res.data.success) {
-        const createdAddress = { 
-          ...address, 
-          _id: res.data.address?.id || res.data.address?._id || '' // Fallback if id is undefined
+        const createdAddress = {
+          ...address,
+          _id: res.data.address?.id || res.data.address?._id || "", // Fallback if id is undefined
         };
         set((state) => ({ addresses: [...state.addresses, createdAddress] }));
         return { success: true, message: "Address created successfully." };
       }
-  
+
       return { success: false, message: "Address creation failed." };
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -112,25 +120,36 @@ export const useAddressStore = create<AddressState>((set) => ({
       }
     }
   },
-  
-  updateAddress: async (addressId: string, updatedAddress: Omit<Address, "_id">) => {
-    if (!updatedAddress.Street || !updatedAddress.City || !updatedAddress.Country || !updatedAddress.ZipCode) {
+
+  updateAddress: async (
+    addressId: string,
+    updatedAddress: Omit<Address, "_id">
+  ) => {
+    if (
+      !updatedAddress.Street ||
+      !updatedAddress.City ||
+      !updatedAddress.Country ||
+      !updatedAddress.ZipCode
+    ) {
       return { success: false, message: "Please fill in all inputs" };
     }
-  
+
     try {
       const token = localStorage.getItem("authToken");
       if (!token) return { success: false, message: "User not authenticated." };
-  
-      // Set all other addresses to non-default if this address is being set as default
+
       if (updatedAddress.isDefault) {
-        set((state) => ({
-          addresses: state.addresses.map((addr) =>
-            addr.isDefault && addr._id !== addressId ? { ...addr, isDefault: false } : addr
-          ),
-        }));
+        await axios.put(
+          "http://localhost:5000/api/addresses/update/clear-default",
+          {},
+          {
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
+          }
+        );
       }
-  
+
       const res = await axios.put(
         `http://localhost:5000/api/addresses/${addressId}`,
         updatedAddress,
@@ -141,7 +160,7 @@ export const useAddressStore = create<AddressState>((set) => ({
           },
         }
       );
-  
+
       if (res.data.success) {
         set((state) => ({
           addresses: state.addresses.map((addr) =>
@@ -150,7 +169,7 @@ export const useAddressStore = create<AddressState>((set) => ({
         }));
         return { success: true, message: "Address updated successfully." };
       }
-  
+
       return { success: false, message: "Address update failed." };
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -168,7 +187,7 @@ export const useAddressStore = create<AddressState>((set) => ({
       }
     }
   },
-  
+
   deleteAddress: async (addressId) => {
     const token = localStorage.getItem("authToken");
     if (!token) return { success: false, message: "User not authenticated." };
@@ -205,6 +224,41 @@ export const useAddressStore = create<AddressState>((set) => ({
         console.log("Unexpected error:", error);
         return { success: false, message: "Failed to create Address." };
       }
+    }
+  },
+  setDefaultAddress: async (addressId) => {
+    const token = localStorage.getItem("authToken");
+    if (!token) return { success: false, message: "User not authenticated." };
+
+    try {
+      const res = await axios.put(
+        `http://localhost:5000/api/addresses/update/set-default/${addressId}`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.data.success) {
+        set((state) => ({
+          addresses: state.addresses.map((address) => ({
+            ...address,
+            isDefault: address._id === addressId,
+          })),
+        }));
+        return {
+          success: true,
+          message: "Default address updated successfully.",
+        };
+      }
+
+      return { success: false, message: res.data.message };
+    } catch (error) {
+      console.error("Error setting default address:", error);
+      return { success: false, message: "Failed to update default address." };
     }
   },
 }));

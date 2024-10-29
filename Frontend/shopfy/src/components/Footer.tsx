@@ -44,7 +44,7 @@ const Footer = () => {
             <Text marginTop={4}>Subscribe</Text>
             <Text>Get 10% off your first order.</Text>
             <Box marginTop={4}>
-              <InputGroup maxW={"300px"}>
+              <InputGroup maxW={{base: "260px", lg: "300px"}}>
                 <Input placeholder="Enter your email" />
                 <InputRightElement children={<AiOutlineSend size={20} />} />
               </InputGroup>
