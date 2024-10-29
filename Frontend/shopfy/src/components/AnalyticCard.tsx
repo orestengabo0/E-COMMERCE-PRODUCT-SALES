@@ -1,4 +1,4 @@
-import { Box, Circle, Icon, Text, VStack } from "@chakra-ui/react";
+import { Box, Circle, Icon, Text, useColorModeValue, VStack } from "@chakra-ui/react";
 import { ElementType } from "react";
 
 interface AnalyticCardProps {
@@ -16,7 +16,7 @@ const AnalyticCard = ({ cardIcon, analyticNumber, cardDescription }: AnalyticCar
       border="1px"
       borderColor="gray.500"
       borderRadius="lg"
-      _hover={{boxShadow: "lg"}}
+      _hover={{boxShadow: "lg", borderColor: useColorModeValue("gray.800","white")}}
       minW={{ base: "180px", md: "220px", lg: "180px" }}
       maxW={{ base: "200px", lg: "190px" }}
       py={4}

@@ -1,10 +1,12 @@
 import { Box, Container, Heading, Image, Text, Flex, useColorModeValue } from "@chakra-ui/react";
 import AnalyticCards from "../components/AnalyticCards";
+import Owners from "../components/Owners";
+import AboutServiceCards from "../components/AboutServiceCards";
 
 const About = () => {
   return (
-    <Container maxW="container.xl" mt={10} p={5}>
-      <Heading mb={6} textAlign="center" fontSize="2xl">
+    <Container maxW="container.xl" mt={10} p={5} py={4}>
+      <Heading mb={6} textAlign="center">
         Our Story
       </Heading>
       <Flex
@@ -30,7 +32,11 @@ const About = () => {
           />
         </Box>
       </Flex>
+      <Heading textAlign={"center"} marginTop={10}>Our Analytics</Heading>
       <AnalyticCards />
+      <Heading textAlign={"center"} marginTop={10}>Our Team</Heading>
+      <Owners />
+      <AboutServiceCards />
     </Container>
   );
 };
