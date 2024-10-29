@@ -8,6 +8,7 @@ import { Box, useColorModeValue } from "@chakra-ui/react";
 import Login from "./pages/Login";
 import Contacts from "./pages/Contacts";
 import Profile from "./pages/Profile";
+import About from "./pages/About";
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
           <Route path="/admin"></Route>
           <Route path="/contacts" element={<Contacts />}></Route>
           <Route path="/profile/*" element={<Profile />}></Route>
+          <Route path="/about" element={<About />}></Route>
         </Routes>
         <Footer />
       </Router>
