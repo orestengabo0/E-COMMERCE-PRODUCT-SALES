@@ -30,48 +30,46 @@ const Addresses = () => {
     Country: "",
     isDefault: false,
   });
-  
-  const { addresses, fetchAddresses, createAddress, deleteAddress, updateAddress, setDefaultAddress } = useAddressStore();
+
+  const {
+    addresses,
+    fetchAddresses,
+    createAddress,
+    deleteAddress,
+    updateAddress,
+    setDefaultAddress,
+  } = useAddressStore();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const stackSpacing = useBreakpointValue({ base: 4, md: 6 });
-  const buttonSize = useBreakpointValue({ base: 'sm', md: 'md' });
-  
+  const buttonSize = useBreakpointValue({ base: "sm", md: "md" });
+
   const toast = useToast();
 
   const openAddressModal = (address: Address | null) => {
-    if (address) {
-      setIsEditMode(true);
-      setNewAddress(address);
-    } else {
-      setIsEditMode(false);
-      setNewAddress({
+    setNewAddress(
+      address ?? {
         _id: "",
         Street: "",
         City: "",
         ZipCode: "",
         Country: "",
         isDefault: false,
-      });
-    }
+      }
+    );
+    setIsEditMode(!!address);
     onOpen();
   };
 
   useEffect(() => {
     const loadAddresses = async () => {
-      const result = await fetchAddresses();
-      if (!result.success) {
-        setError(result.message);
-      }
-      setLoading(false);
+      await fetchAddresses();
     };
     loadAddresses();
   }, []);
 
-  const handleCreateAddress = async () => {
-    const { _id, ...addressData } = newAddress;
+  const handleCreateAddress = async (address: Address) => {
+    const { _id, ...addressData } = address;
     const { success, message } = await createAddress(addressData);
     toast({
       title: success ? "Success" : "Error",
@@ -84,8 +82,8 @@ const Addresses = () => {
     fetchAddresses();
   };
 
-  const handleUpdateAddress = async () => {
-    const { success, message } = await updateAddress(newAddress._id, newAddress);
+  const handleUpdateAddress = async (address: Address) => {
+    const { success, message } = await updateAddress(address._id, address);
     toast({
       title: success ? "Success" : "Error",
       description: message,
@@ -121,19 +119,20 @@ const Addresses = () => {
     if (success) fetchAddresses();
   };
 
-  const filteredAddresses = addresses.filter(address =>
-    [address.Street, address.City, address.ZipCode, address.Country]
-      .some(field => field.toLowerCase().includes(searchQuery.toLowerCase()))
+  const filteredAddresses = addresses.filter((address) =>
+    [address.Street, address.City, address.ZipCode, address.Country].some(
+      (field) => field.toLowerCase().includes(searchQuery.toLowerCase())
+    )
   );
 
   return (
-    <Box maxWidth="1200px" margin="auto" py={8}>
+    <Box maxWidth="1200px" margin="auto" py={2}>
       <VStack spacing={stackSpacing} align="stretch">
         <Heading size="lg">Address Book</Heading>
         <Flex justifyContent={"space-between"} wrap="wrap">
-          <Button 
-            leftIcon={<AddIcon />} 
-            colorScheme="green" 
+          <Button
+            leftIcon={<AddIcon />}
+            colorScheme="teal"
             onClick={() => openAddressModal(null)}
             size={buttonSize}
           >
@@ -164,8 +163,6 @@ const Addresses = () => {
         isOpen={isOpen}
         onClose={onClose}
         editAddress={newAddress}
-        // isEditMode={isEditMode}
-        //onChange={setNewAddress}
         onAddressSubmit={isEditMode ? handleUpdateAddress : handleCreateAddress}
       />
     </Box>

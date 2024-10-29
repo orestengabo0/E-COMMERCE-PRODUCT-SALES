@@ -30,6 +30,7 @@ import {
   ModalCloseButton,
   ModalBody,
   InputRightElement,
+  Switch,
 } from "@chakra-ui/react";
 import { LuUser2 } from "react-icons/lu";
 import { Icon } from "@chakra-ui/react";
@@ -171,7 +172,7 @@ const NavBar = () => {
             size="lg"
             display={{ base: "none", md: "flex" }}
           />
-          <Button onClick={toggleColorMode}>
+          <Button onClick={toggleColorMode} display={{base: "none", md: "flex"}}>
             {colorMode === "light" ? <IoMdMoon color="teal" /> : <FaRegSun />}
           </Button>
           {isLoggedIn && (
@@ -271,6 +272,11 @@ const NavBar = () => {
                     >
                       Cart
                     </Link>
+                    <HStack>
+                      <Text fontWeight={"semibold"}>Light</Text>
+                      <Switch isChecked={colorMode === "dark"} onChange={toggleColorMode} />
+                      <Text fontWeight={"semibold"}>Dark</Text>
+                    </HStack>
                   </HStack>
                 </DrawerBody>
               </DrawerContent>

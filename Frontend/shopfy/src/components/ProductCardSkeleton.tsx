@@ -3,7 +3,7 @@ import React from 'react'
 
 const ProductCardSkeleton = () => {
   return (
-    <Card width={"350px"} overflow={'hidden'} borderRadius={10}>
+    <Card width={"full"} overflow={'hidden'} borderRadius={10}>
         <Skeleton height={250} />
         <CardBody>
             <SkeletonText spacing={4} />

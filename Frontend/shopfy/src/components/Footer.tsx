@@ -23,7 +23,7 @@ import { QRCodeSVG } from "qrcode.react";
 
 const Footer = () => {
   return (
-    <Box bg={"black"} color={"gray.100"} py={8} padding={10}>
+    <Box bg={"black"} color={"gray.100"} py={8} padding={5}>
       <Container maxW={"container.xl"}>
         <HStack
           justify={"space-between"}
@@ -34,7 +34,7 @@ const Footer = () => {
           {/* Shopfy Section */}
           <Box>
             <Text
-              fontSize={{ base: "22", sm: "28" }}
+              fontSize={{ base: "26", sm: "28" }}
               fontWeight={"bold"}
               bgGradient={"linear(to-r, cyan.400, blue.500)"}
               bgClip={"text"}
@@ -44,7 +44,7 @@ const Footer = () => {
             <Text marginTop={4}>Subscribe</Text>
             <Text>Get 10% off your first order.</Text>
             <Box marginTop={4}>
-              <InputGroup maxW={{base: "260px", lg: "300px"}}>
+              <InputGroup maxW={{base: "245x", lg: "300px"}}>
                 <Input placeholder="Enter your email" />
                 <InputRightElement children={<AiOutlineSend size={20} />} />
               </InputGroup>
@@ -102,7 +102,7 @@ const Footer = () => {
                 Download our App
               </Text>
               <VStack alignItems={"start"} spacing={2} marginTop={4}>
-                <Text color={"gray.400"} fontSize={{ base: 10, sm: 13 }}>
+                <Text color={"gray.400"} fontSize={{ base: 15, sm: 13 }}>
                   Save $3 with App New User Only.
                 </Text>
                 <HStack>

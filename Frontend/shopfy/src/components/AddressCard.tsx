@@ -1,10 +1,9 @@
-// AddressCard.tsx
-import { Box, HStack, VStack, Text, Badge, IconButton, Checkbox } from "@chakra-ui/react";
+import { Box, HStack, VStack, Text, Badge, IconButton, Checkbox, useColorModeValue } from "@chakra-ui/react";
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import { Address } from "../types/address";
 
 interface AddressCardProps {
-  address: Address; // Change this to singular
+  address: Address;
   onEdit: (address: Address) => void;
   onDelete: (id: string) => void;
   onDefaultChange: (id: string) => void;
@@ -21,7 +20,7 @@ const AddressCard = ({
       p={4}
       borderWidth="1px"
       borderRadius="lg"
-      bg="white"
+      bg={useColorModeValue("gray.100","gray.700")}
       shadow="sm"
       _hover={{ shadow: "md" }}
       transition="all 0.2s"
@@ -34,13 +33,13 @@ const AddressCard = ({
                 Default address
               </Badge>
             )}
-            <Text fontSize="sm" color="gray.600">
+            <Text fontSize="sm">
               {address.Street}
             </Text>
-            <Text fontSize="sm" color="gray.600">
+            <Text fontSize="sm">
               {address.City}, {address.ZipCode}
             </Text>
-            <Text fontSize="sm" color="gray.600">{address.Country}</Text>
+            <Text fontSize="sm">{address.Country}</Text>
           </VStack>
           <HStack>
             <IconButton
@@ -61,7 +60,7 @@ const AddressCard = ({
         <Checkbox
           isChecked={address.isDefault}
           onChange={() => onDefaultChange(address._id)}
-          size="sm"
+          size="md"
           aria-label="Set as default address"
         >
           Set as default

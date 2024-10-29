@@ -151,7 +151,7 @@ export const useAddressStore = create<AddressState>((set) => ({
       }
 
       const res = await axios.put(
-        `http://localhost:5000/api/addresses/${addressId}`,
+        `http://localhost:5000/api/addresses/update/${addressId}`,
         updatedAddress,
         {
           headers: {

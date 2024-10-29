@@ -18,7 +18,7 @@ const Profile = () => {
         <Flex
           w={"full"}
           justifyContent={"space-between"}
-          marginBottom={10}
+          marginBottom={5}
           fontSize={"18px"}
         >
           <Text as={RouterLink} to={"profile"} _hover={{ color: "red" }}>
@@ -84,7 +84,7 @@ const Profile = () => {
             </Text>
           </VStack>
         </Box>
-        <Box padding={2} w={"full"} marginBottom={"150px"}>
+        <Box padding={2} w={"full"} marginBottom={"90px"}>
           <Routes>
             <Route path="/" element={<Navigate to={"profile"} />}></Route>
             <Route path="profile" element={<ProfileForm />} />

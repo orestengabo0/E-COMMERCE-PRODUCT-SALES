@@ -76,7 +76,7 @@ export function AddressModal({
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <VStack spacing={4}>
+          <VStack spacing={4} align={"stretch"}>
             <Input
               placeholder="Street"
               name="Street"
@@ -105,6 +105,7 @@ export function AddressModal({
               name="isDefault"
               isChecked={addressData.isDefault}
               onChange={handleChange}
+              size={"md"}
             >
               Set as default address
             </Checkbox>
@@ -114,7 +115,7 @@ export function AddressModal({
           <Button colorScheme="blue" mr={3} onClick={handleSubmit}>
             {isEditMode ? "Save Changes" : "Add Address"}
           </Button>
-          <Button variant="ghost" onClick={onClose}>
+          <Button variant="ghost" colorScheme="red" onClick={onClose}>
             Cancel
           </Button>
         </ModalFooter>
