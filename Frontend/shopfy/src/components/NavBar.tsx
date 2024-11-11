@@ -171,6 +171,8 @@ const NavBar = () => {
             variant="ghost"
             size="lg"
             display={{ base: "none", md: "flex" }}
+            as={RouterLink}
+            to={'/cart'}
           />
           <Button onClick={toggleColorMode} display={{base: "none", md: "flex"}}>
             {colorMode === "light" ? <IoMdMoon color="teal" /> : <FaRegSun />}
