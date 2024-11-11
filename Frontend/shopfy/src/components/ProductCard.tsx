@@ -94,7 +94,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, isLiked, onLikeClick
           {[...Array(5)].map((_, index) => (
             <StarIcon
               key={index}
-              boxSize={5}
+              boxSize={4}
               color={
                 index < Math.round(product.ratings.average)
                   ? "yellow.400"
@@ -103,7 +103,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, isLiked, onLikeClick
             />
           ))}
         </HStack>
-        <Button colorScheme="teal" size="md" width="full" mt={2}>
+        <Button colorScheme="teal" size="sm" width="full" mt={2}>
           Add to Cart
         </Button>
       </VStack>

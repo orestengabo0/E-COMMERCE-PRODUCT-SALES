@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import Contacts from "./pages/Contacts";
 import Profile from "./pages/Profile";
 import About from "./pages/About";
+import Cart from "./pages/Cart";
 
 const App = () => {
   return (
@@ -24,6 +25,7 @@ const App = () => {
           <Route path="/contacts" element={<Contacts />}></Route>
           <Route path="/profile/*" element={<Profile />}></Route>
           <Route path="/about" element={<About />}></Route>
+          <Route path="/cart" element={<Cart />}></Route>
         </Routes>
         <Footer />
       </Router>

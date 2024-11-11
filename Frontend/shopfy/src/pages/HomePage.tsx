@@ -44,7 +44,7 @@ const HomePage = () => {
           <AdvertiseCard />
         </Box>
       </Flex>
-      <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} w={"full"} spacing={5}>
+      <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} w={"full"} spacing={5}>
         {isLoading && skeletons.map((skeleton) => (
           <ProductCardSkeleton key={skeleton} />
         ))}

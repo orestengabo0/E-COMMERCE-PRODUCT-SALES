@@ -1,6 +1,5 @@
 import { Box, Circle, Icon, VStack, Text } from "@chakra-ui/react";
 import { ElementType } from "react";
-import { TbTruckDelivery } from "react-icons/tb";
 
 interface AboutServiceCardProps {
   serviceIcon: ElementType;
@@ -21,14 +20,14 @@ const AboutServiceCard = ({
             <Icon as={serviceIcon} boxSize={8} />
           </Circle>
         </Circle>
-        <Text fontSize="2xl" fontWeight="semibold">
+        <Text fontSize={{base: "2xl", md: "xl", lg: "xl"}} fontWeight="semibold">
           {serviceHeading}
         </Text>
         <Text fontSize="md" textAlign="center">
           {serviceDesc}
         </Text>
       </VStack>
-      <Box w="full" h="2px" bg="gray.500" mt={4} />
+      <Box w="full" h="1px" bg="gray.500" mt={4} mb={4} />
     </Box>
   );
 };

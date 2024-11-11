@@ -36,6 +36,7 @@ const About = () => {
       <AnalyticCards />
       <Heading textAlign={"center"} marginTop={10}>Our Team</Heading>
       <Owners />
+      <Heading textAlign={"center"}>Our specialiality</Heading>
       <AboutServiceCards />
     </Container>
   );

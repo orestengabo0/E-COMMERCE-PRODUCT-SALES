@@ -1,8 +1,9 @@
 import { TbTruckDelivery } from "react-icons/tb";
 import { FaHeadphonesAlt } from "react-icons/fa";
 import { MdOutlineVerifiedUser } from "react-icons/md";
-import { Box, VStack } from "@chakra-ui/react";
+import { Box, Stack, VStack } from "@chakra-ui/react";
 import AboutServiceCard from "./AboutServiceCard";
+import { BsBoxArrowDownLeft } from "react-icons/bs";
 
 const aboutServiceData = [
   {
@@ -27,8 +28,8 @@ const aboutServiceData = [
 
 const AboutServiceCards = () => {
   return (
-    <Box>
-      <VStack spacing={10}>
+    <Box marginTop={10} marginBottom={12}>
+      <Box display={{base: "block", md: "flex", lg: "flex"}} justifyContent={{base: "none", md: "space-around", lg: "space-around"}}>
         {aboutServiceData.map((serviceData) => (
           <AboutServiceCard
             key={serviceData.id}
@@ -37,7 +38,7 @@ const AboutServiceCards = () => {
             serviceDesc={serviceData.serviceDesc}
           />
         ))}
-      </VStack>
+      </Box>
     </Box>
   );
 };
